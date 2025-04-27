@@ -1,0 +1,173 @@
+<%- include('partials/header', { title: 'Log In' }) %>
+
+<div class="login-container">
+    <div class="login-box">
+        <h1 class="login-logo">Instagram</h1>
+
+        <form action="/auth/login" method="POST" class="login-form">
+            <input type="text" class="form-control" name="email" placeholder="Phone number, username, or email" required>
+            <input type="password" class="form-control" name="password" placeholder="Password" required>
+            <button type="submit" class="btn-primary">Log in</button>
+        </form>
+
+        <div class="divider">OR</div>
+
+        <button class="btn-facebook">
+            <i class="fab fa-facebook-square"></i> Log in with Facebook
+        </button>
+
+        <a href="#" class="forgot-password">Forgot password?</a>
+
+        <div class="sign-up">
+            <p>Don't have an account? <a href="/auth/register" class="sign-up-link">Sign up</a></p>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Reset some basic styles */
+    body, html {
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', sans-serif;
+        background-color: #fafafa;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+    }
+
+    .login-box {
+        width: 350px;
+        background-color: #fff;
+        padding: 40px;
+        border-radius: 5px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .login-logo {
+        font-size: 40px;
+        font-family: 'Billabong', cursive;
+        margin-bottom: 30px;
+        color: #333;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border: 1px solid #dbdbdb;
+        border-radius: 3px;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 12px;
+        background-color: #0095f6;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .btn-primary:hover {
+        background-color: #0078d4;
+    }
+
+    .divider {
+        margin: 15px 0;
+        font-size: 14px;
+        color: #999;
+    }
+
+    .btn-facebook {
+        width: 100%;
+        padding: 12px;
+        background-color: #4267B2;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .btn-facebook i {
+        margin-right: 8px;
+    }
+
+    .forgot-password {
+        display: block;
+        color: #0095f6;
+        font-size: 14px;
+        margin-top: 10px;
+        text-decoration: none;
+    }
+
+    .forgot-password:hover {
+        text-decoration: underline;
+    }
+
+    .sign-up {
+        background-color: #fafafa;
+        border: 1px solid #dbdbdb;
+        border-radius: 5px;
+        margin-top: 20px;
+        padding: 10px;
+    }
+
+    .sign-up p {
+        font-size: 14px;
+        color: #999;
+    }
+
+    .sign-up-link {
+        color: #0095f6;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .sign-up-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 600px) {
+        .login-box {
+            width: 90%;
+            padding: 20px;
+        }
+        .form-control {
+            font-size: 16px;
+        }
+        .btn-primary {
+            font-size: 16px;
+            padding: 12px;
+        }
+        .btn-facebook {
+            font-size: 16px;
+            padding: 12px;
+        }
+    }
+</style>
+
+<script>
+    // Ensure to include Font Awesome for the Facebook icon (you might already have it in your header partial)
+    // <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</script>
+
+<%- include('partials/footer') %>

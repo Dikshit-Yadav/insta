@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload New Post</title>
+  <link rel="stylesheet" href="/css/upload.css">
+</head>
+<body>
+  <div class="upload-container">
+    <div class="upload-form">
+      <h1>Upload New Post</h1>
+
+      <% if (!userId) { %> <!-- Assuming you pass userId from the session to the view -->
+        <p>You must be logged in to upload a post.</p>
+        <a href="/login">Go to login</a>
+      <% } else { %>
+        <form action="/posts/upload" method="POST" enctype="multipart/form-data">
+          <div class="input-group">
+            <label for="caption">Caption</label>
+            <input type="text" name="caption" id="caption" placeholder="Write a caption..." required/>
+          </div>
+          <div class="input-group">
+            <label for="postImage">Choose Image</label>
+            <input type="file" name="postImage" id="postImage" accept="image/*" required/>
+          </div>
+          <button type="submit" class="upload-button">Upload</button>
+        </form>
+      <% } %>
+
+    </div>
+  </div>
+</body>
+</html>

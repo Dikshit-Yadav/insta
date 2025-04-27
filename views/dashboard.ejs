@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Billabong&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> </head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">Instagram</div>
+            <nav class="nav-links">
+                <a href="/dashboard"><i class="fas fa-home"></i> Home</a>
+                <a href="#"><i class="fas fa-search"></i> Search</a>
+                <a href="#"><i class="fas fa-compass"></i> Explore</a>
+                <a href="#"><i class="far fa-play-circle"></i> Reels</a>
+                <a href="#"><i class="far fa-paper-plane"></i> Messages</a>
+                <a href="#"><i class="far fa-heart"></i> Notifications</a>
+                <a href="/posts/upload"><i class="far fa-plus-square"></i> Create</a>
+                <a href="/profile"><i class="far fa-user-circle"></i> Profile</a>
+                <a href="#"><i class="fas fa-bars"></i> More</a>
+            </nav>
+        </div>
+        <div class="main-content">
+            <div class="stories">
+                <div class="story">Your Story</div>
+                <div class="story">Friend 1</div>
+                <div class="story">Friend 2</div>
+                </div>
+            <div class="feed">
+                <% if (posts && posts.length > 0) { %>
+                    <% posts.forEach(post => { %>
+                        <div class="post">
+                            <div class="post-header">
+                                <img src="/images/default-profile.png" alt="<%= post.username %>'s Profile" width="32" height="32">
+                                <span><%= post.username %></span>
+                            </div>
+                            <img src="<%= post.postImage %>" alt="<%= post.caption %>" class="post-img">
+                            <div class="post-actions">
+                                <i class="far fa-heart"></i>
+                                <i class="far fa-comment"></i>
+                                <i class="far fa-paper-plane"></i>
+                                <i class="far fa-bookmark"></i>
+                            </div>
+                            <div class="likes">100 likes</div>
+                            <div class="caption">
+                                <span><%= post.username %></span> <%= post.caption %>
+                            </div>
+                            </div>
+                    <% }); %>
+                <% } else { %>
+                    <p>No posts to show yet.</p>
+                <% } %>
+            </div>
+        </div>
+        <div class="right-sidebar">
+            <div class="suggestions">
+                <p>Suggested for you</p>
+                <div class="suggested-user">
+                    <p><a>User 1</a> <a href="#">Follow</a></p>
+                </div>
+                <div class="suggested-user">
+                    <p><a>User 2</a> <a href="#">Follow</a></p>
+                </div>
+                </div>
+        </div>
+    </div>
+</body>
+</html>
