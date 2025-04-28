@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const path = require('path');
 const app = express();
 const session = require('express-session');
+const profileRoutes = require('./routes/profileRoutes');
+
 
 app.use(session({
   secret: 'your-secret-key',  // Secret key to sign the session ID cookie
@@ -15,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
-
+app.use('/', profileRoutes);
 // MongoDB Connection
 mongoose.connect('mongodb://localhost/instagram_clone', {
   useNewUrlParser: true,

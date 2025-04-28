@@ -1,0 +1,21 @@
+<%- include('partials/header', { title: 'Edit Profile' }) %>
+
+<div class="edit-profile-container">
+  <h1>Edit Your Profile</h1>
+  
+  <form action="/edit-profile" method="POST">
+    <div class="input-group">
+      <label for="profilePic">Profile Picture URL</label>
+      <input type="text" id="profilePic" name="profilePic" value="<%= user.profilePic %>" placeholder="Paste image URL" />
+    </div>
+
+    <div class="input-group">
+      <label for="bio">Bio</label>
+      <textarea id="bio" name="bio" rows="3" placeholder="Write about yourself..."><%= user.bio %></textarea>
+    </div>
+
+    <button type="submit" class="save-button">Save Changes</button>
+  </form>
+</div>
+
+<%- include('partials/footer') %>

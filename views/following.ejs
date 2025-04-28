@@ -1,0 +1,10 @@
+<%- include('partials/header', { title: user.username + ' Following' }) %>
+
+<h1><%= user.username %>'s Following</h1>
+<ul>
+  <% following.forEach(followed => { %>
+    <li><%= followed.username %></li>
+  <% }) %>
+</ul>
+
+<%- include('partials/footer') %>

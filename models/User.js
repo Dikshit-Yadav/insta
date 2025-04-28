@@ -1,9 +1,19 @@
 const mongoose = require('mongoose');
 
-const UserSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true }
-}, { timestamps: true });
+  email:    { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  profilePic: { type: String, default: 'default.jpg' }, // Profile picture
+  bio: { type: String, default: '' }, // Bio text
+  posts: [{ 
+    imageUrl: String, 
+    caption: String, 
+    createdAt: { type: Date, default: Date.now } 
+  }],
+  savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
+  followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+});
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('User', userSchema);

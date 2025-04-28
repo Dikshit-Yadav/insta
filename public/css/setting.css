@@ -1,0 +1,191 @@
+/* Settings Page Styling */
+
+.settings-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .settings-container h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .input-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .input-group label {
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #555;
+  }
+  
+  .input-group input[type="text"],
+  .input-group input[type="email"],
+  .input-group input[type="password"],
+  .input-group textarea {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    font-size: 16px;
+    resize: vertical;
+  }
+  
+  .input-group input[type="file"] {
+    padding: 10px 0;
+  }
+  
+  textarea {
+    min-height: 100px;
+  }
+  
+  .profile-pic {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    border: 2px solid #ddd;
+  }
+  
+  .save-button {
+    width: 100%;
+    background-color: #3897f0;
+    color: white;
+    padding: 14px 0;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .save-button:hover {
+    background-color: #2878cc;
+  }
+
+  .profile-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+  
+  .profile-top {
+    display: flex;
+    align-items: center;
+    margin-bottom: 40px;
+  }
+  
+  .profile-image img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 50px;
+  }
+  
+  .profile-info {
+    flex: 1;
+  }
+  
+  .profile-username {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .profile-username h2 {
+    font-size: 28px;
+  }
+  
+  .btn {
+    padding: 6px 12px;
+    border: 1px solid #dbdbdb;
+    border-radius: 8px;
+    background: white;
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+  }
+  
+  .icon-btn {
+    font-size: 22px;
+    color: black;
+    text-decoration: none;
+  }
+  
+  .profile-stats {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 20px;
+    font-size: 16px;
+  }
+  
+  .profile-bio p {
+    font-size: 15px;
+  }
+  
+  .profile-posts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  
+  .post-item img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .profile-tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+    border-top: 1px solid #dbdbdb;
+    border-bottom: 1px solid #dbdbdb;
+  }
+  
+  .tab {
+    padding: 15px 20px;
+    text-decoration: none;
+    color: gray;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .tab.active {
+    color: black;
+    border-top: 2px solid black;
+  }
+  
+  .tab-content {
+    display: none;
+  }
+  
+  .tab-content.active {
+    display: block;
+  }
+  
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .settings-container {
+      margin: 20px;
+      padding: 20px;
+    }
+  }
+
+  
