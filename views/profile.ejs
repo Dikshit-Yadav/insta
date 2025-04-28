@@ -1,169 +1,186 @@
 <%- include('partials/header', { title: user.username + "'s Profile" }) %>
 
-<div class="profile-container">
+  <div class="profile-container">
 
-  <!-- Profile Header -->
-  <div class="profile-header">
-    <h1><%= user.username %>'s Profile</h1>
-    <a href="/settings" class="settings-button">⚙️ Settings</a>
-  </div>
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <h1>
+        <%= user.username %>'s Profile
+      </h1>
+      <a href="/settings" class="settings-button">⚙️ Settings</a>
+      <!-- Add this inside your profile.ejs or the desired page -->
+      <a href="/reels/upload">
+        <button class="upload-reel-btn">Upload Reel</button>
+      </a>
 
-  <!-- Profile Top Section -->
-  <div class="profile-top">
-    <div class="profile-image">
-      <img src="/uploads/<%= user.profilePic %>" alt="Profile Picture" class="profile-pic">
     </div>
 
-    <div class="profile-info">
-      <div class="profile-username">
-        <h2><%= user.username %></h2>
+    <!-- Profile Top Section -->
+    <div class="profile-top">
+      <div class="profile-image">
+        <img src="/uploads/<%= user.profilePic %>" alt="Profile Picture" class="profile-pic">
+      </div>
 
-        <% if (isOwnProfile) { %>
-          <a href="/edit-profile" class="edit-btn">Edit Profile</a>
-        <% } else { %>
-          <% if (user._id.toString() !== loggedInUserId) { %>
-            <% if (isFollowing) { %>
-              <form action="/unfollow/<%= user._id %>" method="POST">
-                <button type="submit" class="unfollow-button">Unfollow</button>
-              </form>
+      <div class="profile-info">
+        <div class="profile-username">
+          <h2>
+            <%= user.username %>
+          </h2>
+
+          <% if (isOwnProfile) { %>
+            <a href="/edit-profile" class="edit-btn">Edit Profile</a>
             <% } else { %>
-              <form action="/follow/<%= user._id %>" method="POST">
-                <button type="submit" class="follow-button">Follow</button>
-              </form>
-            <% } %>
-          <% } %>
-        <% } %>
-      </div>
-
-      <div class="profile-stats">
-        <div class="stat">
-         <strong><%= posts.length %></strong> posts
-             </div>
-        <div class="stat">
-          <a href="#" onclick="openFollowersModal()">
-            <strong><a href="/profile/<%= user.username %>/followers"><%= user.followers.length %></a></strong> followers
-          </a>
+              <% if (user._id.toString() !==loggedInUserId) { %>
+                <% if (isFollowing) { %>
+                  <form action="/unfollow/<%= user._id %>" method="POST">
+                    <button type="submit" class="unfollow-button">Unfollow</button>
+                  </form>
+                  <% } else { %>
+                    <form action="/follow/<%= user._id %>" method="POST">
+                      <button type="submit" class="follow-button">Follow</button>
+                    </form>
+                    <% } %>
+                      <% } %>
+                        <% } %>
         </div>
-        <div class="stat">
-          <a href="#" onclick="openFollowingModal()">
-            <strong><a href="/profile/<%= user.username %>/following"><%= user.following.length %></a></strong> following
-          </a>
+
+        <div class="profile-stats">
+          <div class="stat">
+            <strong>
+              <%= posts.length %>
+            </strong> posts
+          </div>
+          <div class="stat">
+            <a href="#" onclick="openFollowersModal()">
+              <strong><a href="/profile/<%= user.username %>/followers">
+                  <%= user.followers.length %>
+                </a></strong> followers
+            </a>
+          </div>
+          <div class="stat">
+            <a href="#" onclick="openFollowingModal()">
+              <strong><a href="/profile/<%= user.username %>/following">
+                  <%= user.following.length %>
+                </a></strong> following
+            </a>
+          </div>
         </div>
-      </div>
 
-      <div class="profile-bio">
-        <p><%= user.bio || 'No bio yet.' %></p>
-      </div>
+        <div class="profile-bio">
+          <p>
+            <%= user.bio || 'No bio yet.' %>
+          </p>
+        </div>
 
+      </div>
+    </div>
+
+    <!-- Upload New Profile Picture Form -->
+    <% if (isOwnProfile) { %>
+      <form action="/upload-profile-pic" method="POST" enctype="multipart/form-data" class="profile-pic-upload">
+        <input type="file" name="profilePic" accept="image/*" />
+        <button type="submit">Upload New Profile Picture</button>
+      </form>
+      <% } %>
+
+        <!-- Tabs Navigation -->
+        <div class="profile-tabs">
+          <a href="#posts" class="tab active" onclick="showTab('posts')">Posts</a>
+          <a href="#reels" class="tab" onclick="showTab('reels')">Reels</a>
+          <a href="#saved" class="tab" onclick="showTab('saved')">Saved</a>
+        </div>
+
+        <!-- Tabs Content -->
+        <div id="posts" class="tab-content active">
+          <div class="profile-posts">
+            <% posts.forEach(post=> { %>
+              <div class="post-item">
+                <img src="<%= post.postImage %>" alt="Post Image">
+                <% if (user.savedPosts.includes(post._id)) { %>
+                  <form action="/unsave/<%= post._id %>" method="POST">
+                    <button type="submit">Unsave</button>
+                  </form>
+                  <% } else { %>
+                    <form action="/save/<%= post._id %>" method="POST">
+                      <button type="submit">Save</button>
+                    </form>
+                    <% } %>
+              </div>
+              <% }) %>
+          </div>
+        </div>
+
+        <div id="reels" class="tab-content">
+          <p>No Reels uploaded yet.</p>
+        </div>
+
+        <div id="saved" class="tab-content">
+          <p>No Saved posts yet.</p>
+        </div>
+
+  </div>
+
+  <!-- Followers Modal -->
+  <div id="followersModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeFollowersModal()">&times;</span>
+      <h2>Followers</h2>
+      <ul>
+        <% user.followers.forEach(follower=> { %>
+          <li>
+            <%= follower.username %>
+          </li>
+          <% }) %>
+      </ul>
     </div>
   </div>
 
-  <!-- Upload New Profile Picture Form -->
-  <% if (isOwnProfile) { %>
-    <form action="/upload-profile-pic" method="POST" enctype="multipart/form-data" class="profile-pic-upload">
-      <input type="file" name="profilePic" accept="image/*" />
-      <button type="submit">Upload New Profile Picture</button>
-    </form>
-  <% } %>
-
-  <!-- Tabs Navigation -->
-  <div class="profile-tabs">
-    <a href="#posts" class="tab active" onclick="showTab('posts')">Posts</a>
-    <a href="#reels" class="tab" onclick="showTab('reels')">Reels</a>
-    <a href="#saved" class="tab" onclick="showTab('saved')">Saved</a>
-  </div>
-
-  <!-- Tabs Content -->
-  <div id="posts" class="tab-content active">
-    <div class="profile-posts">
-      <% posts.forEach(post => { %>
-        <div class="post-item">
-          <img src="/uploads/<%= post.image %>" alt="Post Image">
-        </div>
-      <% }) %>
+  <!-- Following Modal -->
+  <div id="followingModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeFollowingModal()">&times;</span>
+      <h2>Following</h2>
+      <ul>
+        <% user.following.forEach(following=> { %>
+          <li>
+            <%= following.username %>
+          </li>
+          <% }) %>
+      </ul>
     </div>
   </div>
 
-  <div id="reels" class="tab-content">
-    <p>No Reels uploaded yet.</p>
-  </div>
+  <script>
+    // Modal Handling
+    function openFollowersModal() {
+      document.getElementById('followersModal').style.display = 'block';
+    }
+    function closeFollowersModal() {
+      document.getElementById('followersModal').style.display = 'none';
+    }
+    function openFollowingModal() {
+      document.getElementById('followingModal').style.display = 'block';
+    }
+    function closeFollowingModal() {
+      document.getElementById('followingModal').style.display = 'none';
+    }
 
-  <div id="saved" class="tab-content">
-    <p>No Saved posts yet.</p>
-  </div>
+    // Tabs Handling
+    function showTab(tabId) {
+      const tabContents = document.querySelectorAll('.tab-content');
+      const tabs = document.querySelectorAll('.tab');
 
-</div>
+      tabContents.forEach(content => {
+        content.classList.remove('active');
+      });
 
-<!-- Followers Modal -->
-<div id="followersModal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeFollowersModal()">&times;</span>
-    <h2>Followers</h2>
-    <ul>
-      <% user.followers.forEach(follower => { %>
-        <li><%= follower.username %></li>
-      <% }) %>
-    </ul>
-  </div>
-</div>
+      tabs.forEach(tab => {
+        tab.classList.remove('active');
+      });
 
-<!-- Following Modal -->
-<div id="followingModal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeFollowingModal()">&times;</span>
-    <h2>Following</h2>
-    <ul>
-      <% user.following.forEach(following => { %>
-        <li><%= following.username %></li>
-      <% }) %>
-    </ul>
-  </div>
-</div>
+      document.getElementById(tabId).classList.add('active');
+      document.querySelector(`[href="#${tabId}"]`).classList.add('active');
+    }
+  </script>
 
-<script>
-  // Modal Handling
-  function openFollowersModal() {
-    document.getElementById('followersModal').style.display = 'block';
-  }
-  function closeFollowersModal() {
-    document.getElementById('followersModal').style.display = 'none';
-  }
-  function openFollowingModal() {
-    document.getElementById('followingModal').style.display = 'block';
-  }
-  function closeFollowingModal() {
-    document.getElementById('followingModal').style.display = 'none';
-  }
-
-  // Tabs Handling
-  function showTab(tabId) {
-    const tabContents = document.querySelectorAll('.tab-content');
-    const tabs = document.querySelectorAll('.tab');
-    
-    tabContents.forEach(content => {
-      content.classList.remove('active');
-    });
-
-    tabs.forEach(tab => {
-      tab.classList.remove('active');
-    });
-
-    document.getElementById(tabId).classList.add('active');
-    document.querySelector(`[href="#${tabId}"]`).classList.add('active');
-  }
-
-  const tabs = document.querySelectorAll('.tab');
-  const contents = document.querySelectorAll('.tab-content');
-
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(item => item.classList.remove('active'));
-      tab.classList.add('active');
-
-      contents.forEach(content => content.classList.remove('active'));
-      document.querySelector(tab.getAttribute('href')).classList.add('active');
-    });
-  });
-</script>
-
-<%- include('partials/footer') %>
+  <%- include('partials/footer') %>

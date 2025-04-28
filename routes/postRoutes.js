@@ -22,6 +22,23 @@ const upload = multer({ storage });
 // router.get('/posts/upload', isAuthenticated, (req, res) => {
 //   res.render('upload'); // Render the post upload page
 // });
+
+// Route to render user's profile page with posts
+router.get('/profile', isAuthenticated, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+
+    // Find posts by the logged-in user
+    const posts = await Post.find({ userId: userId }).sort({ createdAt: -1 }); // Sort by newest first
+
+    // Render the profile page and pass the posts
+    res.render('profile', { posts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Failed to load profile.');
+  }
+});
+
 // Route for uploading a post, with both authentication check and session-based userId passing
 router.get('/posts/upload', isAuthenticated, (req, res) => {
   const userId = req.session.userId;
@@ -33,31 +50,32 @@ router.get('/posts/upload', isAuthenticated, (req, res) => {
 router.post('/posts/upload', isAuthenticated, upload.single('postImage'), async (req, res) => {
   try {
     const { caption } = req.body; // Get caption from form
-    const username = req.session.username; // Get username from session
+    const userId = req.session.userId; // Get userId from session (change from username)
     const postImage = req.file ? `/uploads/${req.file.filename}` : null; // Save image path
 
     if (!postImage) {
       return res.status(400).send('Image upload is required.');
     }
 
-    if (!username) {
+    if (!userId) {
       return res.status(400).send('You must be logged in to upload a post.');
     }
 
-    // Create a new post object with the username, caption, and image path
+    // Create a new post object with the userId, caption, and image path
     const newPost = new Post({
-      username: username,
+      userId: userId, // Ensure we save the userId
       caption: caption,
       postImage: postImage
     });
 
     // Save the new post to the database
     await newPost.save();
-    res.redirect('/dashboard'); // Redirect to dashboard after successful upload
+    res.redirect('/profile'); // Redirect to profile after successful upload
   } catch (error) {
     console.error(error);
     res.status(500).send('Failed to upload post.');
   }
 });
+
 
 module.exports = router;

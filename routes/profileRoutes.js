@@ -184,4 +184,23 @@ router.post('/unfollow/:id', isAuthenticated, async (req, res) => {
   }
 });
 
+//Saved/Unsaved
+// Save Post
+router.post('/save/:postId', async (req, res) => {
+  const user = await User.findById(req.session.userId);
+  if (!user.savedPosts.includes(req.params.postId)) {
+    user.savedPosts.push(req.params.postId);
+    await user.save();
+  }
+  res.redirect('back');
+});
+
+router.post('/unsave/:postId', async (req, res) => {
+  const user = await User.findById(req.session.userId);
+  user.savedPosts.pull(req.params.postId);
+  await user.save();
+  res.redirect('back');
+});
+
+
 module.exports = router;

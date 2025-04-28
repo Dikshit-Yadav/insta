@@ -1,0 +1,31 @@
+<!-- uploadReel.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload New Reel</title>
+  <link rel="stylesheet" href="/css/uploadReels.css"> <!-- Link your CSS here -->
+</head>
+<body>
+
+  <div class="upload-reel-container">
+    <h1>Upload New Reel</h1>
+
+    <form action="/reels/upload" method="POST" enctype="multipart/form-data">
+      <div class="input-group">
+        <label for="video">Choose Reel Video</label>
+        <input type="file" name="video" accept="video/*" required>
+      </div>
+
+      <div class="input-group">
+        <label for="caption">Caption</label>
+        <input type="text" name="caption" placeholder="Write a caption" required>
+      </div>
+
+      <button type="submit">Upload Reel</button>
+    </form>
+  </div>
+
+</body>
+</html>
