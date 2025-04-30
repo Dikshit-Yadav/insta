@@ -11,6 +11,10 @@ const userSchema = new mongoose.Schema({
     caption: String, 
     createdAt: { type: Date, default: Date.now } 
   }],
+  stories: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Story'
+  }],  
   savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
   followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]

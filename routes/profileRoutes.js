@@ -28,6 +28,31 @@ const findUserById = async (id) => {
 };
 
 // View own profile
+// router.get('/profile', isAuthenticated, async (req, res) => {
+//   try {
+//     const user = await User.findById(req.session.userId)
+//       .populate('savedPosts')  // Populate the saved posts
+//       .populate('posts');      // Populate the posts
+
+//     if (!user) return res.status(404).send('User not found');
+
+//     res.render('profile', {
+//       user: user,
+//       posts: user.posts,         // Pass the user's posts to the template
+//       savedPosts: user.savedPosts, // Pass savedPosts to the template
+//       isOwnProfile: true,         // Use logic to determine if it's the own profile
+//       loggedInUserId: req.session.userId,
+//       isFollowing: user.followers.includes(req.session.userId)
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send('Server error');
+//   }
+// });
+
+
+
+
 router.get('/profile', isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.session.userId);
@@ -185,6 +210,10 @@ router.post('/unfollow/:id', isAuthenticated, async (req, res) => {
 });
 
 //Saved/Unsaved
+router.get('/save/profile', (req, res) => {
+  res.redirect('/profile'); // Redirect to the logged-in user's profile
+});
+
 // Save Post
 router.post('/save/:postId', async (req, res) => {
   const user = await User.findById(req.session.userId);
@@ -192,14 +221,17 @@ router.post('/save/:postId', async (req, res) => {
     user.savedPosts.push(req.params.postId);
     await user.save();
   }
-  res.redirect('back');
+  res.redirect('profile');
 });
 
+router.get('/unsave/profile', (req, res) => {
+  res.redirect('/profile'); // Redirect to the logged-in user's profile
+});
 router.post('/unsave/:postId', async (req, res) => {
   const user = await User.findById(req.session.userId);
   user.savedPosts.pull(req.params.postId);
   await user.save();
-  res.redirect('back');
+  res.redirect('profile');
 });
 
 

@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
+const User = require('../models/User');
 const Post = require('../models/Post');
 const { isAuthenticated } = require('../middleware/authMiddleware'); // Middleware to check if user is authenticated
 
@@ -70,12 +71,63 @@ router.post('/posts/upload', isAuthenticated, upload.single('postImage'), async 
 
     // Save the new post to the database
     await newPost.save();
+    await User.findByIdAndUpdate(
+      userId,
+      { $push: { posts: newPost._id } }, // <-- push post id into posts array
+      { new: true }
+    );
     res.redirect('/profile'); // Redirect to profile after successful upload
-  } catch (error) {
+  }
+   catch (error) {
     console.error(error);
     res.status(500).send('Failed to upload post.');
   }
 });
+
+// Like/Unlike a post
+router.post('/posts/:id/like', isAuthenticated, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    const userId = req.session.userId;
+
+    if (!post) return res.status(404).send('Post not found');
+
+    const index = post.likes.indexOf(userId);
+
+    if (index === -1) {
+      post.likes.push(userId); // like
+    } else {
+      post.likes.splice(index, 1); // unlike
+    }
+
+    await post.save();
+    res.redirect('/profile'); // or use AJAX in frontend
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
+});
+
+// Add a comment
+router.post('/posts/:id/comment', isAuthenticated, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).send('Post not found');
+
+    const comment = {
+      user: req.session.userId,
+      text: req.body.comment
+    };
+
+    post.comments.push(comment);
+    await post.save();
+    res.redirect('/profile');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
+});
+
 
 
 module.exports = router;

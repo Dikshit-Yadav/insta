@@ -9,6 +9,19 @@
   <h1>Instagram Clone Feed</h1>
   <a href="/upload">Upload New Post</a>
 
+  <!-- Stories Bar -->
+  <div class="stories-bar">
+    <% stories.forEach(s => { %>
+      <div class="story-preview">
+        <a href="<%= s.media %>" target="_blank">
+          <img src="/uploads/<%= s.user.profilePic %>" alt="story" />
+          <p><%= s.user.username %></p>
+        </a>
+      </div>
+    <% }) %>
+  </div>
+
+  <!-- Feed -->
   <div class="feed">
     <% posts.forEach(post => { %>
       <div class="post">
