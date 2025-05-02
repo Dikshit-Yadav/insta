@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Search</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+    }
+    form {
+      margin-bottom: 30px;
+    }
+    input[type="text"] {
+      padding: 8px 12px;
+      width: 250px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 8px 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      margin-left: 8px;
+      cursor: pointer;
+    }
+    .results h2 {
+      margin-top: 30px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      margin: 5px 0;
+      background: #fff;
+      padding: 10px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Search</h1>
+  <form action="/search" method="GET">
+    <input type="text" name="q" placeholder="Search users or posts..." required />
+    <button type="submit">Search</button>
+  </form>
+
+  <% if (typeof query !== 'undefined') { %>
+    <div class="results">
+      <h2>Results for "<%= query %>":</h2>
+
+      <h3>Users:</h3>
+      <ul>
+        <% if (users.length > 0) { %>
+          <% users.forEach(user => { %>
+            <li><a href="/show-user/<%= user._id %>"><%= user.username %></a></li>
+
+          <% }) %>
+        <% } else { %>
+          <li>No users found</li>
+        <% } %>
+      </ul>
+
+      <h3>Posts:</h3>
+      <ul>
+        <% if (posts.length > 0) { %>
+          <% posts.forEach(post => { %>
+            <li><%= post.caption %></li>
+          <% }) %>
+        <% } else { %>
+          <li>No posts found</li>
+        <% } %>
+      </ul>
+    </div>
+  <% } %>
+</body>
+</html>

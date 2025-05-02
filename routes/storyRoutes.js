@@ -76,18 +76,39 @@ router.post('/upload-story', upload, async (req, res) => {
 // Route for handling the uploaded story (GET request to view story)
 router.get('/story/:storyId', isAuthenticated, async (req, res) => {
   try {
-    const currentStory = await Story.findById(req.params.storyId).populate('user');
+    const currentStory = await Story.findById(req.params.storyId)
+      .populate('user')
+      .exec();
+
     if (!currentStory) return res.status(404).send('Story not found');
 
-    // Fetch next and previous stories
-    const nextStory = await Story.findOne({ createdAt: { $gt: currentStory.createdAt } }).sort({ createdAt: 1 }).populate('user');
-    const prevStory = await Story.findOne({ createdAt: { $lt: currentStory.createdAt } }).sort({ createdAt: -1 }).populate('user');
+    // Track view
+    if (!currentStory.views.includes(req.session.userId)) {
+      currentStory.views.push(req.session.userId);
+      await currentStory.save();
+    }
 
-    res.render('storyViewer', { story: currentStory, nextStory, prevStory });
+    // Fetch next and previous stories
+    const nextStory = await Story.findOne({ createdAt: { $gt: currentStory.createdAt } })
+      .sort({ createdAt: 1 }).populate('user');
+
+    const prevStory = await Story.findOne({ createdAt: { $lt: currentStory.createdAt } })
+      .sort({ createdAt: -1 }).populate('user');
+
+    res.render('storyViewer', {
+      story: currentStory,
+      nextStory,
+      prevStory
+    });
+    console.log('Views:', currentStory.views);
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error');
   }
+  
+
 });
+
+
 
 module.exports = router;

@@ -26,6 +26,9 @@
             <% } else { %>
                 <img src="<%= story.media %>" alt="Story" draggable="false">
             <% } %>
+            <p>Viewed by <%= story.views.length %> user(s)</p>
+            <pre><%= JSON.stringify(story.views) %></pre>
+
         </div>
 
         <!-- Navigation Buttons -->

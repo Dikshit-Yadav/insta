@@ -6,7 +6,10 @@ const session = require('express-session');
 const profileRoutes = require('./routes/profileRoutes');
 const reelsRoutes = require('./routes/reelsRoutes');
 const Story = require('./models/Story');
-const storyRoutes = require('./routes/storyRoutes');  
+const storyRoutes = require('./routes/storyRoutes'); 
+const searchRoutes = require('./routes/searchRoutes'); // Adjust path
+app.use('/', searchRoutes); // or app.use('/search', searchRoutes);
+
 app.use('/', storyRoutes);
 
 app.use(session({
@@ -49,41 +52,42 @@ app.get('/', async (req, res) => {
 
 // Dashboard
 app.get('/dashboard', async (req, res) => {
-  // Ensure the user is logged in by checking the session
-  if (!req.session.userId) { // Assuming you store userId in the session upon login
-      return res.redirect('/auth/login'); // Redirect to login if no session data
+  if (!req.session.userId) { 
+    return res.redirect('/auth/login');
   }
 
   try {
-      const Post = require('./models/Post'); // Assuming your Post model is here
-      const posts = await Post.find().sort({ createdAt: -1 }); // Fetch all posts, newest first
+    const Post = require('./models/Post');
+    const User = require('./models/User');
+    const Story = require('./models/Story');
 
-      const User = require('./models/User'); // Assuming your User model is here
-      const user = await User.findById(req.session.userId);
+    const posts = await Post.find().sort({ createdAt: -1 });
+    const user = await User.findById(req.session.userId);
 
-      if (!user) {
-          // Handle the case where the user ID in the session is invalid
-          return res.redirect('/auth/login');
-      }
+    if (!user) {
+      return res.redirect('/auth/login');
+    }
 
-      // Fetch active stories (stories that haven't expired)
-      const Story = require('./models/Story'); // Assuming your Story model is here
-      const stories = await Story.find({ expiresAt: { $gt: new Date() } }).populate('user');
+    const stories = await Story.find({ expiresAt: { $gt: new Date() } }).populate('user');
 
-      // Access user data from the fetched user object
-      const { username, email } = user;
+    const { username, email, profilePic } = user;
 
-      res.render('dashboard', {
-          username: username,
-          email: email,
-          posts: posts,
-          stories: stories  // Add the stories to the data passed to the view
-      });
+    // Pass the body content in the render method
+    res.render('dashboard', {
+      title: 'Dashboard',
+      username: username,
+      email: email,
+      profilePic: profilePic,
+      posts: posts,
+      stories: stories,
+      body: '<%- include("dashboardContent") %>'  // Inject dashboard content
+    });
   } catch (err) {
-      console.error(err);
-      res.status(500).send('Error fetching data for dashboard');
+    console.error(err);
+    res.status(500).send('Error fetching data for dashboard');
   }
 });
+
 
 
 

@@ -64,7 +64,8 @@ router.post('/posts/upload', isAuthenticated, upload.single('postImage'), async 
 
     // Create a new post object with the userId, caption, and image path
     const newPost = new Post({
-      userId: userId, // Ensure we save the userId
+      userId: userId,
+      // user: userId,  // Ensure we save the userId
       caption: caption,
       postImage: postImage
     });

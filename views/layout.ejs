@@ -1,23 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%- title %></title>
-    <link rel="stylesheet" href="/css/style.css"> <!- Your main dark mode styles -->
-    <link rel="stylesheet" href="/css/login.css"> <!- Styles for the form elements -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Billabong&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%- title %></title>
+  <link rel="stylesheet" href="/css/style.css"> <!-- Your main dark mode styles -->
+  <link rel="stylesheet" href="/css/login.css"> <!-- Styles for the form elements -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Billabong&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <div class="login-box"> <!- Or a similar container for your form -->
-            <h1>Instagram</h1> <!- Add your logo/app name -->
-            <%- body %> <!- This is where your signup.ejs content will be injected -->
-        </div>
+
+  <!-- 🔍 Navigation Bar with Search -->
+  <nav style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: #fff; border-bottom: 1px solid #ddd;">
+    <div class="nav-left">
+      <a href="/" style="margin-right: 15px;">Home</a>
+      <a href="/dashboard">Dashboard</a>
     </div>
-    <%- include('partials/footer') %> <!- If you have a common footer -->
+
+    <form action="/search" method="GET" style="display: flex; align-items: center;">
+      <input 
+        type="text" 
+        name="q" 
+        placeholder="Search users or posts..." 
+        style="padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px;" 
+        required
+      />
+      <button type="submit" style="margin-left: 5px; padding: 6px 12px; background-color: #007bff; color: #fff; border: none; border-radius: 4px;">
+        Search
+      </button>
+    </form>
+  </nav>
+
+  <!-- 🧾 Page Content -->
+  <div class="container">
+    <div class="login-box">
+      <h1>Instagram</h1>
+      <%- body %> <!-- This is where your signup/login content will be injected -->
+    </div>
+  </div>
+
+  <%- include('partials/footer') %> <!-- Optional footer -->
 </body>
 </html>

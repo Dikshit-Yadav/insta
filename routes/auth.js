@@ -49,58 +49,24 @@ router.post('/upload-profile-pic', upload.single('profilePicFile'), async (req, 
     res.status(500).send('Error updating profile picture.');
   }
 });
-// Login
-// router.post('/login', async (req, res) => {
-//   const { email, password } = req.body;
-//   console.log({ email, password });
 
-//   try {
-//     // Find the user by email
-//     const user = await User.findOne({ email });
-
-//     // Check if the user exists
-//     if (!user) {
-//       return res.status(400).send('Invalid credentials');
-//     }
-
-//     // Debugging password comparison
-//     console.log('Stored Password:', user.password);
-//     console.log('Entered Password:', password);
-
-//     // Compare passwords directly
-//     if (user.password === password) {
-//       // req.session.userId = user._id;
-//       return res.redirect('/dashboard');
-//     } else {
-//       return res.status(400).send('Invalid credentials');
-//     }
-
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send('Login failed');
-//   }
-// });
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   console.log({ email, password });
 
   try {
-    // Find the user by email
     const user = await User.findOne({ email });
 
-    // Check if the user exists
     if (!user) {
       return res.status(400).send('Invalid credentials');
     }
 
-    // Compare entered password with the stored password directly (not recommended for production)
     if (user.password === password) {
       // Store user details in the session
       req.session.userId = user._id;
       req.session.username = user.username;
       req.session.email = user.email;
 
-      // Redirect to dashboard after successful login
       return res.redirect('/dashboard');
     } else {
       return res.status(400).send('Invalid credentials');
@@ -112,32 +78,13 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// router.post('/upload-profile-pic', upload.single('profilePic'), async (req, res) => {
-//   try {
-//     if (!req.file) {
-//       return res.status(400).send('No file uploaded.');
-//     }
-
-//     // Update user's profilePic in the database
-//     const updatedUser = await User.findByIdAndUpdate(req.session.userId, {
-//       profilePic: req.file.filename  // Save the new profile pic filename
-//     }, { new: true });
-
-//     // Redirect to profile page after updating
-//     res.redirect(`/profile/${updatedUser._id}`);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send('Error uploading profile picture.');
-//   }
-// });
-
 // Logout route
 router.get('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       return res.status(500).send('Error logging out');
     }
-    res.redirect('/login'); // Redirect to login after logging out
+    res.redirect('/login');
   });
 });
 
