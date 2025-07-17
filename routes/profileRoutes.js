@@ -4,6 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const User = require('../models/User');
 const Post = require('../models/Post');
+const Notification = require('../models/Notification');
 
 // Multer Setup
 const storage = multer.diskStorage({
@@ -166,52 +167,97 @@ router.get('/profile/:username/following', isAuthenticated, async (req, res) => 
 });
 
 // Follow / Unfollow Handlers
+// router.post('/follow/:id', isAuthenticated, async (req, res) => {
+//   try {
+//     const targetUser = await User.findById(req.params.id);
+//     const currentUser = await User.findById(req.session.userId); // or req.user._id
+
+//     if (!targetUser || !currentUser) return res.status(404).send('User not found');
+//     if (targetUser._id.equals(currentUser._id)) return res.status(400).send('Cannot follow yourself');
+
+//     // Check if not already following
+//     if (!currentUser.following.includes(targetUser._id)) {
+//       currentUser.following.push(targetUser._id);
+//       targetUser.followers.push(currentUser._id);
+
+//       await currentUser.save();
+//       await targetUser.save();
+
+//       // ✅ CREATE NOTIFICATION
+//       await Notification.create({
+//         sender: currentUser._id,
+//         receiver: targetUser._id,
+//         type: 'follow',
+//         message: `${currentUser.username} started following you.`,
+//       });
+//       console.log(`✅ Notification created for ${targetUser.username} from ${currentUser.username}`);
+//     }
+    
+//     res.redirect('back');
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send('Error following user');
+//   }
+// });
+
+
+// router.post('/unfollow/:id', isAuthenticated, async (req, res) => {
+//   try {
+//     const targetUser = await User.findById(req.params.id);
+//     const currentUser = await User.findById(req.session.userId);
+
+//     if (!targetUser || !currentUser) return res.status(404).send('User not found');
+
+//     currentUser.following.pull(targetUser._id);
+//     targetUser.followers.pull(currentUser._id);
+
+//     await currentUser.save();
+//     await targetUser.save();
+
+//     res.redirect('back');
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send('Error unfollowing user');
+//   }
+// });
+
+//Saved/Unsaved
+router.get('/save/profile', (req, res) => {
+  res.redirect('/profile'); // Redirect to the logged-in user's profile
+});
+
+// Follow / Unfollow Handlers
 router.post('/follow/:id', isAuthenticated, async (req, res) => {
   try {
     const targetUser = await User.findById(req.params.id);
-    const currentUser = await User.findById(req.session.userId);
+    const currentUser = await User.findById(req.session.userId); // or req.user._id
 
     if (!targetUser || !currentUser) return res.status(404).send('User not found');
     if (targetUser._id.equals(currentUser._id)) return res.status(400).send('Cannot follow yourself');
 
+    // Check if not already following
     if (!currentUser.following.includes(targetUser._id)) {
       currentUser.following.push(targetUser._id);
       targetUser.followers.push(currentUser._id);
 
       await currentUser.save();
       await targetUser.save();
-    }
 
+      // ✅ CREATE NOTIFICATION
+      await Notification.create({
+        sender: currentUser._id,
+        receiver: targetUser._id,
+        type: 'follow',
+        message: `${currentUser.username} started following you.`,
+      });
+      console.log(`✅ Notification created for ${targetUser.username} from ${currentUser.username}`);
+    }
+    
     res.redirect('back');
   } catch (err) {
     console.error(err);
     res.status(500).send('Error following user');
   }
-});
-
-router.post('/unfollow/:id', isAuthenticated, async (req, res) => {
-  try {
-    const targetUser = await User.findById(req.params.id);
-    const currentUser = await User.findById(req.session.userId);
-
-    if (!targetUser || !currentUser) return res.status(404).send('User not found');
-
-    currentUser.following.pull(targetUser._id);
-    targetUser.followers.pull(currentUser._id);
-
-    await currentUser.save();
-    await targetUser.save();
-
-    res.redirect('back');
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error unfollowing user');
-  }
-});
-
-//Saved/Unsaved
-router.get('/save/profile', (req, res) => {
-  res.redirect('/profile'); // Redirect to the logged-in user's profile
 });
 
 // Save Post

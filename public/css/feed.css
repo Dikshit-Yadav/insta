@@ -1,0 +1,129 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Helvetica Neue', sans-serif;
+    background-color: #fafafa;
+    color: #262626;
+  }
+  
+  /* Top Nav Bar */
+  nav {
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #fff;
+    border-bottom: 1px solid #dbdbdb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  nav a {
+    text-decoration: none;
+    color: #262626;
+    font-weight: bold;
+    margin-left: 15px;
+  }
+  
+  .container {
+    display: flex;
+    justify-content: center;
+    padding-top: 70px;
+    gap: 2rem;
+  }
+  
+  /* Feed Section */
+  .feed {
+    width: 600px;
+  }
+  
+  .post {
+    background-color: #fff;
+    border: 1px solid #dbdbdb;
+    margin-bottom: 20px;
+    border-radius: 4px;
+  }
+  
+  .post-header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+  }
+  
+  .post-header img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .post-img {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+  }
+  
+  .post p {
+    padding: 10px;
+  }
+  
+  /* Suggested Posts */
+  .suggested-posts {
+    width: 300px;
+  }
+  
+  .suggested-posts h2 {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #8e8e8e;
+  }
+  
+  .suggested-posts .post {
+    background: none;
+    border: none;
+    padding: 5px 0;
+  }
+  
+  .suggested-posts .post-header span {
+    font-weight: 500;
+  }
+  
+  /* Stories Bar */
+  .stories-bar {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px 0;
+    background-color: #fff;
+    border: 1px solid #dbdbdb;
+    margin-bottom: 20px;
+  }
+  
+  .story-preview {
+    text-align: center;
+    margin: 0 10px;
+  }
+  
+  .story-preview img {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 2px solid #c13584;
+  }
+  
+  .story-preview p {
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  
+  /* Scrollbar Hidden for Stories */
+  .stories-bar::-webkit-scrollbar {
+    display: none;
+  }
+  

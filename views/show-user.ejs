@@ -179,6 +179,75 @@
       cursor: pointer;
       color: #333;
     }
+
+/* Profile Preview Hover Effect */
+.profile-preview {
+  display: none;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 40px;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 180px;
+  z-index: 10;
+  opacity: 0;
+  transform: translateX(-50%) translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+li:hover .profile-preview {
+  display: block;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Button Hover Effect */
+.profile-btn {
+  background-color: #0095f6;
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.profile-btn:hover {
+  background-color: #007acc;
+  transform: scale(1.05); /* Slight scaling effect on hover */
+}
+
+/* Posts Grid Hover Effect */
+.post:hover {
+  transform: scale(1.02); /* Slight scale effect when hovering over posts */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.post img {
+  transition: transform 0.3s ease;
+}
+
+.post:hover img {
+  transform: scale(1.05); /* Slight zoom effect for the post image */
+}
+
+/* Modal Hover Effect */
+.modal-content {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.modal-content:hover {
+  transform: translateY(-5px);
+  opacity: 0.9;
+}
+
+
   </style>
 </head>
 <body>
@@ -241,24 +310,35 @@
     <% }) %>
   </div>
 
-  <!-- Followers Modal -->
+<!-- Followers Modal -->
 <div id="followersModal" class="modal" style="display: none;">
   <div class="modal-content">
     <span onclick="closeModal('followersModal')" class="close">&times;</span>
     <h3>Followers</h3>
     <ul style="list-style: none; padding: 0;">
       <% user.followers?.forEach(follower => { %>
-        <li style="display: flex; align-items: center; margin-bottom: 10px;">
+        <li style="display: flex; align-items: center; margin-bottom: 10px; position: relative;">
+          <!-- Follower Profile Picture -->
           <img src="/uploads/<%= follower.profilePic || '/uploads/1745863270595.jpg' %>" alt="avatar"
                style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">
+
+          <!-- Follower Username -->
           <a href="/show-user/<%= follower._id %>" style="text-decoration: none; color: #333;">
             <%= follower.username %>
           </a>
+
+          <!-- Hover Profile Preview -->
+          <div class="profile-preview" style="display: none; position: absolute; left: 50%; transform: translateX(-50%); top: 40px; padding: 10px; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 180px;">
+            <img src="/uploads/<%= follower.profilePic || '/uploads/1745863270595.jpg' %>" alt="avatar" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+            <p><strong><%= follower.username %></strong></p>
+            <p><%= follower.bio || "No bio available" %></p>
+          </div>
         </li>
       <% }) %>
     </ul>
   </div>
 </div>
+
 
 <!-- Following Modal -->
 <div id="followingModal" class="modal" style="display: none;">
@@ -318,6 +398,21 @@
       console.error('Follow toggle failed:', err);
     }
   }
+
+  document.querySelectorAll('li').forEach(function(item) {
+    item.addEventListener('mouseover', function() {
+      const profilePreview = item.querySelector('.profile-preview');
+      if (profilePreview) {
+        profilePreview.style.display = 'block';
+      }
+    });
+    item.addEventListener('mouseout', function() {
+      const profilePreview = item.querySelector('.profile-preview');
+      if (profilePreview) {
+        profilePreview.style.display = 'none';
+      }
+    });
+  });
 </script>
 
 </body>

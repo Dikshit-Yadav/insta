@@ -7,6 +7,7 @@ const commentSchema = new mongoose.Schema({
 });
 
 const postSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   caption: String,
   postImage: String,
   createdAt: { type: Date, default: Date.now },

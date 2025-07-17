@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const Story = require('../models/Story');
+const Post = require('../models/Post');
 const upload = require('../middleware/upload');
 
 router.get('/register', (req, res) => {
   res.render('register', { title: 'Sign Up' });
 });
-// Register
 router.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
   try {
@@ -62,10 +63,11 @@ router.post('/login', async (req, res) => {
     }
 
     if (user.password === password) {
-      // Store user details in the session
       req.session.userId = user._id;
       req.session.username = user.username;
       req.session.email = user.email;
+
+     
 
       return res.redirect('/dashboard');
     } else {
@@ -78,7 +80,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Logout route
 router.get('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {

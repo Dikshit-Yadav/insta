@@ -1,0 +1,27 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forget Password</title>
+</head>
+<body>
+    <div class="formContainer">
+        <form action="/forgot-password" method="post" class="form">
+            <input type="text" placeholder="Enter register email..." name="email">
+            <button type="submit">Send Password</button>
+        </form>
+    </div>
+</body>
+</html> -->
+<%- include('partials/header', { title: 'Forgot Password' }) %>
+
+<div class="login-box">
+  <h2>Forgot Password</h2>
+  <form action="/forgot-password" method="POST">
+    <input type="email" name="email" class="form-control" placeholder="Enter your email" required />
+    <button type="submit" class="btn-primary" style="margin-top: 10px;">Send Password</button>
+  </form>
+</div>
+
+<%- include('partials/footer') %>
