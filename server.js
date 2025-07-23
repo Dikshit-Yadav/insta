@@ -49,6 +49,7 @@ app.use('/', require('./routes/postRoutes'));
 app.use('/logout', require('./routes/auth'));
 app.use('/forget', require('./routes/auth'));
 
+
 app.get('/', async (req, res) => {
  
   res.render('login');
@@ -82,6 +83,7 @@ app.get('/dashboard', async (req, res) => {
       profilePic: profilePic,
       posts: posts,
       stories: stories,
+      suggestedUsers: "",
       body: '<%- include("dashboardContent") %>'  
     });
   } catch (err) {

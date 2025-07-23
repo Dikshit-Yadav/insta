@@ -9,14 +9,13 @@
 </head>
 
 <body>
-
+  <%- include('partials/header', { title: 'Search Profile' }) %>
+  <%- include('partials/sidebar') %>
     <div class="story-viewer">
-        <!-- Progress Bar -->
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill"></div>
         </div>
 
-        <!-- Story Content -->
         <div class="story-content">
             <% if (story.media.includes('video')) { %>
                 <video controls autoplay>
@@ -31,35 +30,29 @@
 
         </div>
 
-        <!-- Navigation Buttons -->
         <div class="story-navigation">
             <button onclick="navigateStory(prevStoryId)">Previous</button>
             <button onclick="navigateStory(nextStoryId)">Next</button>
         </div>
 
-        <!-- Close Button -->
         <button class="close-btn" onclick="closeViewer()">Close</button>
     </div>
 
     <script>
-        // Story ID variables from EJS
         const prevStoryId = "<%= prevStory ? prevStory._id : '' %>";
         const nextStoryId = "<%= nextStory ? nextStory._id : '' %>";
 
-        // Close viewer
         function closeViewer() {
             window.location.href = '/profile';
         }
 
-        // Navigate to previous or next story
         function navigateStory(storyId) {
             if (storyId) {
                 window.location.href = `/story/${storyId}`;
             }
         }
 
-        // Auto progress
-        const duration = 5000; // 5 seconds
+        const duration = 5000; 
         const progressFill = document.getElementById('progressFill');
 
         function startProgressBar() {

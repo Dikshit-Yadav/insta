@@ -6,11 +6,14 @@
   <link rel="stylesheet" href="/css/upload.css">
 </head>
 <body>
+    <%- include('partials/header', { title: 'Search Profile' }) %>
+  <%- include('partials/sidebar') %>
   <div class="upload-container">
     <div class="upload-form">
       <h1>Upload New Post</h1>
 
-      <% if (!userId) { %> <!-- Assuming you pass userId from the session to the view -->
+      <% if (!user) { %>
+
         <p>You must be logged in to upload a post.</p>
         <a href="/login">Go to login</a>
       <% } else { %>

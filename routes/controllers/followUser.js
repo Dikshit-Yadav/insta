@@ -12,11 +12,9 @@ exports.followUser = async (req, res) => {
     const isFollowing = currentUser.following.some(f => f._id.toString() === userToFollow._id.toString());
 
     if (isFollowing) {
-      // Unfollow
       currentUser.following.pull(userToFollow._id);
       userToFollow.followers.pull(currentUser._id);
     } else {
-      // Follow
       currentUser.following.push(userToFollow._id);
       userToFollow.followers.push(currentUser._id);
     }

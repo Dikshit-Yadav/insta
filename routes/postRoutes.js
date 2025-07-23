@@ -5,37 +5,32 @@ const User = require('../models/User');
 const Post = require('../models/Post');
 const Notification = require('../models/Notification');
 const Comment = require('../models/Comment');
+const Story = require('../models/Story');
 
-const { isAuthenticated } = require('../middleware/authMiddleware'); // Middleware to check if user is authenticated
-
+const { isAuthenticated } = require('../middleware/authMiddleware');
 const router = express.Router();
 
-// Set up multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'public/uploads'); // Save the uploaded files in the 'public/uploads' folder
+    cb(null, 'public/uploads'); 
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Ensure unique filenames by appending timestamp
+    cb(null, Date.now() + path.extname(file.originalname)); 
   }
 });
 
 const upload = multer({ storage });
 
-// Route for uploading a post (only accessible to logged-in users)
 // router.get('/posts/upload', isAuthenticated, (req, res) => {
 //   res.render('upload'); // Render the post upload page
 // });
 
-// Route to render user's profile page with posts
 router.get('/profile', isAuthenticated, async (req, res) => {
   try {
     const userId = req.session.userId;
 
-    // Find posts by the logged-in user
-    const posts = await Post.find({ userId: userId }).sort({ createdAt: -1 }); // Sort by newest first
+    const posts = await Post.find({ userId: userId }).sort({ createdAt: -1 }); 
 
-    // Render the profile page and pass the posts
     res.render('profile', { posts });
   } catch (error) {
     console.error(error);
@@ -43,19 +38,20 @@ router.get('/profile', isAuthenticated, async (req, res) => {
   }
 });
 
-// Route for uploading a post, with both authentication check and session-based userId passing
-router.get('/posts/upload', isAuthenticated, (req, res) => {
-  const userId = req.session.userId;
-  res.render('upload', { userId }); // Ensure the session userId is passed to the view
+
+router.get('/posts/upload', isAuthenticated, async(req, res) => {
+
+  const user = await User.findById(req.session.userId);
+res.render('upload', { user });
+
 });
 
 
-// Handle post upload
 router.post('/posts/upload', isAuthenticated, upload.single('postImage'), async (req, res) => {
   try {
-    const { caption } = req.body; // Get caption from form
-    const userId = req.session.userId; // Get userId from session (change from username)
-    const postImage = req.file ? `/uploads/${req.file.filename}` : null; // Save image path
+    const { caption } = req.body; 
+    const userId = req.session.userId; 
+    const postImage = req.file ? `/uploads/${req.file.filename}` : null; 
 
     if (!postImage) {
       return res.status(400).send('Image upload is required.');
@@ -65,22 +61,19 @@ router.post('/posts/upload', isAuthenticated, upload.single('postImage'), async 
       return res.status(400).send('You must be logged in to upload a post.');
     }
 
-    // Create a new post object with the userId, caption, and image path
     const newPost = new Post({
       userId: userId,
-      // user: userId,  // Ensure we save the userId
       caption: caption,
       postImage: postImage
     });
 
-    // Save the new post to the database
     await newPost.save();
     await User.findByIdAndUpdate(
       userId,
-      { $push: { posts: newPost._id } }, // <-- push post id into posts array
+      { $push: { posts: newPost._id } }, 
       { new: true }
     );
-    res.redirect('/profile'); // Redirect to profile after successful upload
+    res.redirect('/profile');
   }
    catch (error) {
     console.error(error);
@@ -88,7 +81,6 @@ router.post('/posts/upload', isAuthenticated, upload.single('postImage'), async 
   }
 });
 
-// Like/Unlike a post
 router.post('/posts/:id/like', isAuthenticated, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -112,7 +104,6 @@ router.post('/posts/:id/like', isAuthenticated, async (req, res) => {
   }
 });
 
-// Add a comment
 router.post('/posts/:id/comment', isAuthenticated, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -132,36 +123,29 @@ router.post('/posts/:id/comment', isAuthenticated, async (req, res) => {
   }
 });
 
-// Feed route showing followed users' posts and suggested posts
 router.get('/feed', isAuthenticated, async (req, res) => {
   try {
-    // Get the currently authenticated user
     const userId = req.session.userId;
     const currentUser = await User.findById(userId).populate('following');
 
-    // Get the list of users the current user is following
     const followingIds = currentUser.following.map(u => u._id);
 
-    // Get the posts from the users the current user is following
     const feedPosts = await Post.find({ userId: { $in: followingIds } })
       .sort({ createdAt: -1 })
-      .populate('userId', 'username profilePic'); // Populate user data (username, profilePic) for each post
-
-    // Exclude the current user and the people they follow from the suggested posts
+      .populate('userId', 'username profilePic'); 
+  
     const excludeIds = [...followingIds, currentUser._id];
 
-    // Get suggested posts from users the current user isn't following
     const suggestedPosts = await Post.find({ userId: { $nin: excludeIds } })
       .sort({ createdAt: -1 })
       .limit(5)
-      .populate('userId', 'username profilePic'); // Populate user data for suggested posts
+      .populate('userId', 'username profilePic')
 
-    // Get the stories (if you have them in the database)
     const stories = await Story.find()
-      .populate('user', 'username profilePic')  // Populate the user data for stories
+      .populate('user', 'username profilePic')  
       .sort({ createdAt: -1 });
 
-    // Render the feed page with the posts, suggested posts, current user, and stories
+   
     res.render('feed', {
       posts: feedPosts,
       suggestedPosts,
@@ -180,7 +164,6 @@ router.post('/posts/:id/like', async (req, res) => {
     
     if (!post) return res.status(404).send("Post not found");
 
-    // Avoid notifying yourself
     if (req.session.userId !== post.user._id.toString()) {
       await Notification.create({
         recipient: post.user._id,
@@ -205,17 +188,15 @@ router.post('/posts/:id/comment', async (req, res) => {
     
     if (!post) return res.status(404).send("Post not found");
 
-    // Avoid notifying yourself
     if (req.session.userId !== post.user._id.toString()) {
       await Notification.create({
-        recipient: post.user._id, // The post owner
-        sender: req.session.userId, // The commenter
-        type: 'comment', // Notification type
-        message: 'commented on your post' // Notification message
+        recipient: post.user._id, 
+        sender: req.session.userId, 
+        type: 'comment', 
+        message: 'commented on your post' 
       });
     }
 
-    // Handle actual comment logic here: saving comment to the database
     const newComment = new Comment({
       postId: post._id,
       userId: req.session.userId,
@@ -243,13 +224,13 @@ router.post('/users/:id/follow', async (req, res) => {
     
     if (!userToFollow) return res.status(404).send("User not found");
 
-    // Avoid notifying yourself
+   
     if (req.session.userId !== userToFollow._id.toString()) {
       await Notification.create({
-        recipient: userToFollow._id, // The user being followed
-        sender: req.session.userId, // The follower
-        type: 'follow', // Notification type
-        message: 'started following you' // Notification message
+        recipient: userToFollow._id, 
+        sender: req.session.userId,
+        type: 'follow', 
+        message: 'started following you'
       });
     }
 
@@ -272,16 +253,15 @@ router.post('/users/:id/follow', async (req, res) => {
   }
 });
 
-// Follow User
+
 router.post('/follow/:id', isAuthenticated, async (req, res) => {
   try {
     const targetUser = await User.findById(req.params.id);
-    const currentUser = await User.findById(req.session.userId); // or req.user._id
+    const currentUser = await User.findById(req.session.userId); 
 
     if (!targetUser || !currentUser) return res.status(404).send('User not found');
     if (targetUser._id.equals(currentUser._id)) return res.status(400).send('Cannot follow yourself');
 
-    // Check if not already following
     if (!currentUser.following.includes(targetUser._id)) {
       currentUser.following.push(targetUser._id);
       targetUser.followers.push(currentUser._id);
@@ -289,7 +269,6 @@ router.post('/follow/:id', isAuthenticated, async (req, res) => {
       await currentUser.save();
       await targetUser.save();
 
-      // Create Notification
       const notification = new Notification({
         sender: currentUser._id,
         receiver: targetUser._id,
@@ -297,7 +276,7 @@ router.post('/follow/:id', isAuthenticated, async (req, res) => {
         message: `${currentUser.username} started following you.`
       });
       await notification.save();
-      console.log(`✅ Notification created for ${targetUser.username} from ${currentUser.username}`);
+      console.log(` Notification created for ${targetUser.username} from ${currentUser.username}`);
     }
 
     res.redirect('back');

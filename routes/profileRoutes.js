@@ -6,20 +6,17 @@ const User = require('../models/User');
 const Post = require('../models/Post');
 const Notification = require('../models/Notification');
 
-// Multer Setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'public/uploads/'),
   filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
 });
 const upload = multer({ storage });
 
-// Middleware
 function isAuthenticated(req, res, next) {
   if (req.session.userId) return next();
   res.redirect('/login');
 }
 
-// Utils
 const findUserByUsername = async (username) => {
   return await User.findOne({ username }).populate('followers').populate('following');
 };
@@ -65,7 +62,6 @@ router.get('/profile', isAuthenticated, async (req, res) => {
   }
 });
 
-// View profile by username
 router.get('/profile/:username', isAuthenticated, async (req, res) => {
   try {
     const { username } = req.params;

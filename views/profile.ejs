@@ -1,21 +1,19 @@
 <%- include('partials/header', { title: user.username + "'s Profile" }) %>
+<%- include('partials/sidebar') %>
 
   <div class="profile-container">
 
-    <!-- Profile Header -->
     <div class="profile-header">
       <h1>
         <%= user.username %>'s Profile
       </h1>
       <a href="/settings" class="settings-button">⚙️ Settings</a>
-      <!-- Add this inside your profile.ejs or the desired page -->
       <a href="/reels/upload">
         <button class="upload-reel-btn">Upload Reel</button>
       </a>
 
     </div>
 
-    <!-- Profile Top Section -->
     <div class="profile-top">
       <div class="profile-image">
         <img src="/uploads/<%= user.profilePic %>" alt="Profile Picture" class="profile-pic">
@@ -75,7 +73,6 @@
       </div>
     </div>
 
-    <!-- Upload New Profile Picture Form -->
     <% if (isOwnProfile) { %>
       <form action="/upload-profile-pic" method="POST" enctype="multipart/form-data" class="profile-pic-upload">
         <input type="file" name="profilePic" accept="image/*" />
@@ -83,22 +80,18 @@
       </form>
       <% } %>
 
-        <!-- Tabs Navigation -->
         <div class="profile-tabs">
           <a href="#posts" class="tab active" onclick="showTab('posts')">Posts</a>
           <a href="#reels" class="tab" onclick="showTab('reels')">Reels</a>
           <a href="#saved" class="tab" onclick="showTab('saved')">Saved</a>
         </div>
 
-        <!-- Tabs Content -->
         <div id="posts" class="tab-content active">
           <div class="profile-posts">
             <% posts.forEach(post => { %>
               <div class="post-item">
-                <!-- Post Image -->
                 <img src="<%= post.postImage %>" alt="Post Image">
             
-                <!-- Like Button -->
                 <form action="/posts/<%= post._id %>/like" method="POST">
                   <button type="submit">
                     <% if (post.likes.includes(loggedInUserId)) { %>
@@ -110,7 +103,6 @@
                   </button>
                 </form>
             
-                <!-- Save/Unsave Button -->
                 <% if (user.savedPosts.includes(post._id)) { %>
                   <form action="/unsave/<%= post._id %>" method="POST">
                     <button type="submit">Unsave</button>
@@ -121,15 +113,13 @@
                   </form>
                 <% } %>
             
-                <!-- Comments Display -->
                 <div class="comments">
                   <% post.comments.forEach(c => { %>
                     <p><strong><%= c.user.username %>:</strong> <%= c.text %></p>
                   <% }) %>
                 </div>
             
-                <!-- Comment Form -->
-                <form action="/posts/<%= post._id %>/comment" method="POST">
+                 <form action="/posts/<%= post._id %>/comment" method="POST">
                   <input type="text" name="comment" placeholder="Add a comment..." required>
                   <button type="submit">Post</button>
                 </form>

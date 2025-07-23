@@ -16,7 +16,6 @@
     </nav>
   </header>
 
-  <!-- Stories Bar -->
   <section class="stories-bar">
     <% if (stories && stories.length > 0) { %>
       <% stories.forEach(s => { %>
@@ -30,7 +29,6 @@
     <% } %>
   </section>
 
-  <!-- Feed Section -->
   <main class="feed">
     <% posts.forEach(post => { %>
       <div class="post">
@@ -54,14 +52,12 @@
           <strong><%= post.userId.username %></strong> <%= post.caption %>
         </div>
 
-        <!-- Comments -->
         <div class="comments">
           <% post.comments.forEach(c => { %>
             <p><strong><%= c.user.username || 'User' %>:</strong> <%= c.text %></p>
           <% }) %>
         </div>
 
-        <!-- Comment Form -->
         <form action="/posts/<%= post._id %>/comment" method="POST" class="comment-form">
           <input type="text" name="comment" placeholder="Add a comment..." required>
           <button type="submit">Post</button>

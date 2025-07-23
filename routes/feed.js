@@ -5,7 +5,6 @@ const Post = require('../models/Post');
 const Story = require('../models/Story');
 const { isAuthenticated } = require('../middleware/authMiddleware');
 
-// Example: Route to view the feed (e.g., /feed)
 router.get('/feed', isAuthenticated, async (req, res) => {
     try {
       const userId = req.session.userId;
@@ -28,11 +27,10 @@ router.get('/feed', isAuthenticated, async (req, res) => {
         .limit(5)
         .populate('userId', 'username profilePic');
   
-      // Passing currentUser to the EJS view as user
       res.render('feed', {
         posts: feedPosts,
         suggestedPosts,
-        user: currentUser // Ensure that user is passed here
+        user: currentUser 
       });
     } catch (err) {
       console.error(err);

@@ -251,7 +251,8 @@ li:hover .profile-preview {
   </style>
 </head>
 <body>
-
+  <%- include('partials/header', { title: 'Search Profile' }) %>
+  <%- include('partials/sidebar') %>
   <div class="profile-header">
     <a href="/show-user/<%= user._id %>">
       <div class="profile-image">
@@ -281,7 +282,6 @@ li:hover .profile-preview {
         <p class="bio"><%= user.bio %></p>
       <% } %>
 
-      <!-- Follow / Edit Profile Button -->
       <% if (currentUser) { %>
         <% if (isOwnProfile) { %>
           <a href="/edit-profile" class="btn btn-primary">Edit Profile</a>
@@ -310,7 +310,6 @@ li:hover .profile-preview {
     <% }) %>
   </div>
 
-<!-- Followers Modal -->
 <div id="followersModal" class="modal" style="display: none;">
   <div class="modal-content">
     <span onclick="closeModal('followersModal')" class="close">&times;</span>
@@ -318,16 +317,13 @@ li:hover .profile-preview {
     <ul style="list-style: none; padding: 0;">
       <% user.followers?.forEach(follower => { %>
         <li style="display: flex; align-items: center; margin-bottom: 10px; position: relative;">
-          <!-- Follower Profile Picture -->
           <img src="/uploads/<%= follower.profilePic || '/uploads/1745863270595.jpg' %>" alt="avatar"
                style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">
 
-          <!-- Follower Username -->
           <a href="/show-user/<%= follower._id %>" style="text-decoration: none; color: #333;">
             <%= follower.username %>
           </a>
 
-          <!-- Hover Profile Preview -->
           <div class="profile-preview" style="display: none; position: absolute; left: 50%; transform: translateX(-50%); top: 40px; padding: 10px; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 180px;">
             <img src="/uploads/<%= follower.profilePic || '/uploads/1745863270595.jpg' %>" alt="avatar" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
             <p><strong><%= follower.username %></strong></p>
@@ -340,7 +336,6 @@ li:hover .profile-preview {
 </div>
 
 
-<!-- Following Modal -->
 <div id="followingModal" class="modal" style="display: none;">
   <div class="modal-content">
     <span onclick="closeModal('followingModal')" class="close">&times;</span>

@@ -9,8 +9,10 @@ router.get('/dashboard', async (req, res) => {
 
   try {
     const user = await User.findById(req.session.userId);
-    const posts = await Post.find().populate('user').sort({ createdAt: -1 });
+    const posts = await Post.find().populate('userId','username profilePic').sort({ createdAt: -1 });
+
     const stories = await Story.find().populate('user').sort({ createdAt: -1 });
+console.log("First Post User:", posts[0].userId);
 
     const notifications = await Notification.find({ receiver: req.session.userId })
       .populate('sender', 'username profilePic')
@@ -22,7 +24,23 @@ router.get('/dashboard', async (req, res) => {
       isRead: false
     });
 
-    res.render('dashboard', { user, posts, stories, unreadCount, notifications });
+    const currentUser = await User.findById(req.session.userId).populate('following');
+    const followingIds = currentUser.following.map(user => user._id);
+
+    const suggestedUsers = await User.find({
+      _id: { $nin: [...followingIds, req.session.userId] }
+    }).limit(5);
+    const safeStories = stories.filter(s => s.user) || null;
+
+       console.log("🔍 Total Posts:", posts.postImage );
+    res.render('dashboard', {
+      user,
+      posts,
+      stories: safeStories,
+      unreadCount,
+      notifications,
+      suggestedUsers
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send('Dashboard load failed');
@@ -41,7 +59,7 @@ router.get('/notification', async (req, res) => {
     );
 
     const notifications = await Notification.find({ recipient: req.session.userId })
-      .populate('sender') 
+      .populate('sender')
       .sort({ createdAt: -1 });
 
     res.render('notification', { notifications });

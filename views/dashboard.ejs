@@ -33,7 +33,7 @@
       <span class="badge"><%= unreadCount %></span>
     <% } %>
   </a>
-  <a href="/logout">Logout</a>
+  <a href="/auth/logout">Logout</a>
         </div>
         
         
@@ -44,9 +44,7 @@
     </div>
 
     <div class="main-content">
-      <!-- Stories Bar -->
       <div class="stories-bar">
-        <!-- Add Story Button -->
         <div class="add-story">
           <a href="/upload-story"><i class="fas fa-plus-circle"></i> Add Story</a>
         </div>
@@ -65,36 +63,37 @@
         <% } %>
       </div>
 
-      <!-- Posts Feed -->
       <div class="feed">
         <% if (posts && posts.length > 0) { %>
-          <% posts.forEach(post => { %>
-            <div class="post">
-              <% if (post.user) { %>
-                <div class="post-header">
-                  <!-- <img src="/uploads/<= post.user.profilePic %>" alt="story" onerror="this.src='/images/default-profile.png';" /> -->
-                  <p><%= post.user.username %></p>
-                </div>
-              <% } else { %>
-                <div class="post-header">
-                  <img src="/images/default-ProfilePic.png" alt="default-profile" />
-                  <p>Unknown User</p>
-                </div>
-              <% } %>
-              
-              <img src="<%= post.postImage %>" alt="<%= post.caption %>" class="post-img">
-              <div class="post-actions">
-                <i class="far fa-heart"></i>
-                <i class="far fa-comment"></i>
-                <i class="far fa-paper-plane"></i>
-                <i class="far fa-bookmark"></i>
-              </div>
-              <div class="likes">100 likes</div>
-              <div class="caption">
-                <span><%= post.username %></span> <%= post.caption %>
-              </div>
-            </div>
-          <% }); %>
+         <% posts.forEach(post => { %>
+  <div class="post">
+    <% if (post.userId) { %>
+      <div class="post-header">
+        <img src="/uploads/<%= post.userId?.profilePic %>" alt="user" onerror="this.src='/uploads/default-profile.png';" />
+        <p><%= post.userId?.username  || "Unknown"%></p> 
+      </div>
+    <% } else { %>
+      <div class="post-header">
+        <img src="/uploads/default-profile.png" alt="default">
+        <p>Unknown User</p>
+      </div>
+    <% } %>
+
+    <img src="<%= post.postImage %>" alt="<%= post.caption %>" class="post-img">
+    <div class="post-actions">
+      <i class="far fa-heart"></i>
+      <i class="far fa-comment"></i>
+      <i class="far fa-paper-plane"></i>
+      <i class="far fa-bookmark"></i>
+    </div>
+    <div class="likes">100 likes</div>
+    <div class="caption">
+<span><%= post.userId?.username || "Unknown" %></span>
+      <p><%= post.caption %></p>
+    </div>
+  </div>
+<% }); %>
+
         <% } else { %>
           <p>No posts to show yet.</p>
         <% } %>

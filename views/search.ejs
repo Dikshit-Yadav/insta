@@ -6,78 +6,179 @@
   <title>Search</title>
   <link rel="stylesheet" href="/css/style.css" />
   <style>
-    body {
-      font-family: 'Roboto', sans-serif;
-      padding: 20px;
-      background: #f4f4f4;
+    * {
+      box-sizing: border-box;
     }
+
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: #f4f4f4;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 250px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #fff;
+      border-right: 1px solid #ddd;
+      padding: 20px;
+    }
+
+    .main-content {
+      margin-left: 250px;
+      padding: 30px;
+      flex: 1;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+    }
+
     form {
+      display: flex;
+      align-items: center;
       margin-bottom: 30px;
     }
+
     input[type="text"] {
-      padding: 8px 12px;
-      width: 250px;
-      border-radius: 4px;
+      padding: 10px 15px;
+      width: 300px;
+      border-radius: 6px;
       border: 1px solid #ccc;
+      font-size: 1rem;
     }
+
     button {
-      padding: 8px 16px;
-      background-color: #007bff;
+      padding: 10px 20px;
+      background-color: #0095f6;
       color: white;
       border: none;
-      border-radius: 4px;
-      margin-left: 8px;
+      border-radius: 6px;
+      margin-left: 10px;
+      font-size: 1rem;
       cursor: pointer;
     }
-    .results h2 {
-      margin-top: 30px;
+
+    button:hover {
+      background-color: #0077cc;
     }
+
+    .results {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .results h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .results h3 {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      color: #555;
+    }
+
     ul {
       list-style: none;
       padding: 0;
+      margin-top: 10px;
     }
+
     li {
-      margin: 5px 0;
-      background: #fff;
-      padding: 10px;
+      background: #f9f9f9;
+      padding: 10px 15px;
+      margin-bottom: 10px;
       border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    li:hover {
+      background: #eaeaea;
+    }
+
+    a {
+      text-decoration: none;
+      color: #0077cc;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 20px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+      }
+
+      form {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      button {
+        margin-left: 0;
+        margin-top: 10px;
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Search</h1>
-  <form action="/search" method="GET">
-    <input type="text" name="q" placeholder="Search users or posts..." required />
-    <button type="submit">Search</button>
-  </form>
+  <%- include('partials/header', { title: 'Search Profile' }) %>
+  <%- include('partials/sidebar') %>
 
-  <% if (typeof query !== 'undefined') { %>
-    <div class="results">
-      <h2>Results for "<%= query %>":</h2>
+  <div class="main-content">
+    <h1>Search</h1>
 
-      <h3>Users:</h3>
-      <ul>
-        <% if (users.length > 0) { %>
-          <% users.forEach(user => { %>
-            <li><a href="/show-user/<%= user._id %>"><%= user.username %></a></li>
+    <form action="/search" method="GET">
+      <input type="text" name="q" placeholder="Search users or posts..." required />
+      <button type="submit">Search</button>
+    </form>
 
-          <% }) %>
-        <% } else { %>
-          <li>No users found</li>
-        <% } %>
-      </ul>
+    <% if (typeof query !== 'undefined') { %>
+      <div class="results">
+        <h2>Results for "<%= query %>":</h2>
 
-      <h3>Posts:</h3>
-      <ul>
-        <% if (posts.length > 0) { %>
-          <% posts.forEach(post => { %>
-            <li><%= post.caption %></li>
-          <% }) %>
-        <% } else { %>
-          <li>No posts found</li>
-        <% } %>
-      </ul>
-    </div>
-  <% } %>
+        <h3>Users:</h3>
+        <ul>
+          <% if (users.length > 0) { %>
+            <% users.forEach(user => { %>
+              <li><a href="/show-user/<%= user._id %>"><%= user.username %></a></li>
+            <% }) %>
+          <% } else { %>
+            <li>No users found</li>
+          <% } %>
+        </ul>
+
+        <h3>Posts:</h3>
+        <ul>
+          <% if (posts.length > 0) { %>
+            <% posts.forEach(post => { %>
+              <li><%= post.caption %></li>
+            <% }) %>
+          <% } else { %>
+            <li>No posts found</li>
+          <% } %>
+        </ul>
+      </div>
+    <% } %>
+  </div>
 </body>
 </html>
