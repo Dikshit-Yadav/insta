@@ -6,7 +6,6 @@
 
   <form action="/settings" method="POST" enctype="multipart/form-data">
 
-    <!-- Profile Picture -->
     <div class="input-group">
       <label>Current Profile Picture:</label>
       <img src="/uploads/<%= user.profilePic ? user.profilePic : 'default.jpg' %>" alt="Profile Picture" class="profile-pic">
@@ -17,25 +16,21 @@
       <input type="file" id="profilePicFile" name="profilePicFile" accept="image/*" />
     </div>
 
-    <!-- Username -->
     <div class="input-group">
       <label for="username">Username</label>
       <input type="text" id="username" name="username" value="<%= user.username %>" required />
     </div>
 
-    <!-- Email -->
     <div class="input-group">
       <label for="email">Email</label>
       <input type="email" id="email" name="email" value="<%= user.email %>" required />
     </div>
 
-    <!-- Bio -->
     <div class="input-group">
       <label for="bio">Bio</label>
       <textarea id="bio" name="bio" placeholder="Tell something about yourself..."><%= user.bio %></textarea>
     </div>
 
-    <!-- Password -->
     <div class="input-group">
       <label for="password">New Password (leave blank if unchanged)</label>
       <input type="password" id="password" name="password" />

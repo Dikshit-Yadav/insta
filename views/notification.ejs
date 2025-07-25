@@ -1,38 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Notifications</title>
-  <link rel="stylesheet" href="/css/notification.css">
-</head>
-<body>
-  <%- include('partials/sidebar') %>
+<%- include('partials/header') %>
+<%- include('partials/sidebar') %>
 
-  <div class="container">
-    <h1>Notifications</h1>
-    <% if (notifications.length > 0) { %>
+<div class="container">
+  <h1>Notifications</h1>
+
+  <% if (notifications.length > 0) { %>
+    <div class="notification-list">
+      <% notifications.forEach(n => { %>
         <div class="notification-item">
-            <img src="/uploads/<%= n.sender.profilePic %>" alt="user" onerror="this.src='/images/default-profile.png';">
-            <div class="notification-text">
-              <p>
-                <% if (n.type === 'like') { %>
-                  ❤️
-                <% } else if (n.type === 'comment') { %>
-                  💬
-                <% } else if (n.type === 'follow') { %>
-                  👤
-                <% } else { %>
-                  🔔
-                <% } %>
-                <%= n.message %>
-              </p>
-              <span class="notification-time"><%= n.createdAt.toDateString() %></span>
-            </div>
+          <img src="/uploads/<%= n.sender.profilePic %>" alt="user" onerror="this.src='/images/default-profile.png';">
+          <div class="notification-content">
+            <p>
+              <% if (n.type === 'like') { %><span class="emoji">❤️</span>
+              <% } else if (n.type === 'comment') { %><span class="emoji">💬</span>
+              <% } else if (n.type === 'follow') { %><span class="emoji">👤</span>
+              <% } else { %><span class="emoji">🔔</span>
+              <% } %>
+              <strong><%= n.sender.username %></strong> <%= n.message %>
+            </p>
+            <span class="notification-time"><%= n.createdAt.toDateString() %></span>
           </div>
-          
-    <% } else { %>
-      <p>No notifications yet.</p>
-    <% } %>
-  </div>
-</body>
-</html>
+        </div>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <p>No notifications yet.</p>
+  <% } %>
+</div>

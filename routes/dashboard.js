@@ -3,16 +3,42 @@ const router = express.Router();
 const Post = require('../models/Post');
 const Story = require('../models/Story');
 const User = require('../models/User');
+const Notification = require('../models/Notification');
 
 router.get('/dashboard', async (req, res) => {
-  if (!req.session.userId) return res.redirect('/login');
+  console.log("GET /dashboard route triggered");
+
+  if (!req.session.userId) {
+    return res.redirect('/auth/login');
+  }
 
   try {
     const user = await User.findById(req.session.userId);
-    const posts = await Post.find().populate('userId','username profilePic').sort({ createdAt: -1 });
 
-    const stories = await Story.find().populate('user').sort({ createdAt: -1 });
-console.log("First Post User:", posts[0].userId);
+    const posts = await Post.find()
+  .populate('userId', 'username profilePic')
+  .populate({
+    path: 'comments',
+    populate: {
+      path: 'user',
+      select: 'username profilePic'
+    }
+  })
+  .sort({ createdAt: -1 });
+
+  // const posts = await Post.find()
+  // .populate('userId', 'username profilePic')
+  // .populate({
+  //   path: 'comments',
+  //   populate: {
+  //     path: 'user',
+  //     select: 'username profilePic'
+  //   }
+  // }).sort({ createdAt: -1 });
+
+    const stories = await Story.find({ expiresAt: { $gt: new Date() } })
+      .populate('user', 'username profilePic')
+      .sort({ createdAt: -1 });
 
     const notifications = await Notification.find({ receiver: req.session.userId })
       .populate('sender', 'username profilePic')
@@ -30,47 +56,27 @@ console.log("First Post User:", posts[0].userId);
     const suggestedUsers = await User.find({
       _id: { $nin: [...followingIds, req.session.userId] }
     }).limit(5);
-    const safeStories = stories.filter(s => s.user) || null;
 
-       console.log("🔍 Total Posts:", posts.postImage );
+    const safeStories = stories.filter(s => s.user);
+console.log(posts[0]?.comments[0]);
+
     res.render('dashboard', {
+      title: 'Dashboard',
       user,
+      username: user.username,
+      email: user.email,
+      profilePic: user.profilePic,
       posts,
       stories: safeStories,
       unreadCount,
       notifications,
-      suggestedUsers
+      suggestedUsers,
+      body: '<%- include("dashboardContent") %>'
     });
   } catch (err) {
-    console.error(err);
+    console.error("Error loading dashboard:", err);
     res.status(500).send('Dashboard load failed');
   }
 });
-
-const Notification = require('../models/Notification');
-
-router.get('/notification', async (req, res) => {
-  if (!req.session.userId) return res.redirect('/login');
-
-  try {
-    await Notification.updateMany(
-      { recipient: req.session.userId, isRead: false },
-      { $set: { isRead: true } }
-    );
-
-    const notifications = await Notification.find({ recipient: req.session.userId })
-      .populate('sender')
-      .sort({ createdAt: -1 });
-
-    res.render('notification', { notifications });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Could not load notifications");
-  }
-});
-
-
-
-
 
 module.exports = router;

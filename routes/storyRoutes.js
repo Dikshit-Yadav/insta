@@ -1,13 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const Story = require('../models/Story');  // Ensure correct path
+const Story = require('../models/Story'); 
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { isAuthenticated } = require('../middleware/authMiddleware');
 const session = require('express-session');
 
-// Use express-session middleware to manage sessions
 router.use(session({
   secret: 'your_secret_key',  
   resave: false,
@@ -15,34 +14,30 @@ router.use(session({
   cookie: { secure: false }  
 }));
 
-// Ensure uploads/stories directory exists
 const uploadDir = path.join(__dirname, '../uploads/stories');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Configure file upload
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, uploadDir); // Store file in the 'uploads/stories' directory
+    cb(null, uploadDir); 
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Store file with timestamp
+    cb(null, Date.now() + path.extname(file.originalname)); 
   },
 });
 
-// Initialize multer with file size limit and storage configuration
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 10 * 1024 * 1024 },  // 10MB file size limit
+  limits: { fileSize: 10 * 1024 * 1024 },  
 }).single('storyImage');
 
-// Route for uploading story (GET request to show upload page)
 router.get('/upload-story', (req, res) => {
   if (!req.session.userId) {
-    return res.redirect('/auth/login');  // Redirect to login if user is not logged in
+    return res.redirect('/auth/login');  
   }
-  res.render('upload-story');  // Render the story upload page
+  res.render('upload-story');  
 });
 
 router.post('/upload-story', upload, async (req, res) => {
@@ -56,58 +51,72 @@ router.post('/upload-story', upload, async (req, res) => {
       return res.status(400).send('No file uploaded');
     }
 
-    console.log('File uploaded:', req.file);  // Log file details
+    console.log('File uploaded:', req.file);  
 
     const newStory = new Story({
-      user: req.session.userId,  // Assuming userId is stored in session
-      media: `/uploads/stories/${req.file.filename}`,  // Serve file from static path
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),  // Expires in 24 hours
+      user: req.session.userId,  
+      media: `/uploads/stories/${req.file.filename}`,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), 
     });
     
     await newStory.save();
     console.log('Story uploaded successfully');
-    res.redirect('/dashboard');  // Redirect back to dashboard
+    res.redirect('/dashboard');  
   } catch (err) {
     console.error('Error during story upload:', err);
     res.status(500).send('Error uploading story');
   }
 });
 
-// Route for handling the uploaded story (GET request to view story)
+
 router.get('/story/:storyId', isAuthenticated, async (req, res) => {
   try {
-    const currentStory = await Story.findById(req.params.storyId)
-      .populate('user')
+    let currentStory = await Story.findById(req.params.storyId)
+      .populate('user', 'username')
+      .populate('views', 'username') 
       .exec();
 
     if (!currentStory) return res.status(404).send('Story not found');
 
-    // Track view
-    if (!currentStory.views.includes(req.session.userId)) {
-      currentStory.views.push(req.session.userId);
+    const userId = req.session.userId.toString();
+
+    const alreadyViewed = currentStory.views.some(viewer => 
+      viewer._id.toString() === userId
+    );
+
+    if (!alreadyViewed) {
+      currentStory.views.push(userId);
       await currentStory.save();
+
+      currentStory = await Story.findById(req.params.storyId)
+        .populate('user', 'username')
+        .populate('views', 'username') 
+        .exec();
     }
 
-    // Fetch next and previous stories
+    console.log('Story viewed by:');
+    currentStory.views.forEach((viewer, index) => {
+      console.log(`${index + 1}. ${viewer.username}`);
+    });
+
     const nextStory = await Story.findOne({ createdAt: { $gt: currentStory.createdAt } })
-      .sort({ createdAt: 1 }).populate('user');
+      .sort({ createdAt: 1 }).populate('user', 'username');
 
     const prevStory = await Story.findOne({ createdAt: { $lt: currentStory.createdAt } })
-      .sort({ createdAt: -1 }).populate('user');
+      .sort({ createdAt: -1 }).populate('user', 'username');
 
     res.render('storyViewer', {
       story: currentStory,
       nextStory,
       prevStory
     });
-    console.log('Views:', currentStory.views);
+
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error');
   }
-  
-
 });
+
 
 
 

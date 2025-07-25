@@ -1,17 +1,17 @@
 const express = require('express');
 const router = express.Router();
 // const followUser = require('../controllers/followUser');
-const User = require('../models/User'); // Adjust path
-const Post = require('../models/Post'); // If searching posts too
+const User = require('../models/User'); 
+const Post = require('../models/Post'); 
 const session = require('express-session');
 const { followUser } = require('./controllers/followUser');
 const { isAuthenticated } = require('../middleware/authMiddleware');
 
 router.use(session({
-  secret: 'your-secret-key',  // Secret key to sign the session ID cookie
-  resave: false,              // Don't save session if unmodified
-  saveUninitialized: true,    // Save session even if uninitialized
-  cookie: { secure: false }   // Set secure: true if using HTTPS (in production)
+  secret: 'your-secret-key',  
+  resave: false,              
+  saveUninitialized: true,    
+  cookie: { secure: false }   
 }));
 
 router.post('/follow/:id', isAuthenticated, followUser);
@@ -43,14 +43,12 @@ router.get('/search', async (req, res) => {
 });
 
 
-// Route to show user profile
 
 router.get('/show-user/:userId', isAuthenticated, async (req, res) => {
   try {
     const mongoose = require("mongoose");
     const userId = req.params.userId;
 
-    // Validate ObjectId
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       console.log("Invalid ObjectId:", userId);
       return res.status(400).send('Invalid user ID');
@@ -76,21 +74,5 @@ router.get('/show-user/:userId', isAuthenticated, async (req, res) => {
 });
 
 
-// router.get('/show-user/:userId', isAuthenticated, async (req, res) => {
-//     try {
-//         const user = await User.findById(req.params.userId); 
-//         // const user = await User.findById(req.params.id);// Use userId from URL
-//         if (!user) return res.status(404).send('User not found');
-//         console.log("User ID:", user._id);
-
-//         const posts = await Post.find({ user: user._id });
-        
-
-//         res.render('show-user', { user, posts,currentUser: req.user  });  // Render the show-user.ejs template
-//     } catch (err) {
-//         console.error(err);
-//         res.status(500).send('Server error');
-//     }
-// });
 
 module.exports = router;

@@ -304,3 +304,17 @@ body {
   color: #777;
   font-size: 14px;
 }
+
+.comment {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.comment img {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  object-fit: cover;
+}

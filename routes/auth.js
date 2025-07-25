@@ -33,11 +33,9 @@ router.post('/upload-profile-pic', upload.single('profilePicFile'), async (req, 
     let newProfilePic;
 
     if (req.file) {
-      // If user uploaded a file
-      newProfilePic = req.file.filename;  // Save the filename
+      newProfilePic = req.file.filename;  
     } else if (req.body.profilePicUrl) {
-      // If user pasted a URL
-      newProfilePic = req.body.profilePicUrl;  // Save the URL
+      newProfilePic = req.body.profilePicUrl;  
     } else {
       return res.status(400).send('No profile picture provided.');
     }

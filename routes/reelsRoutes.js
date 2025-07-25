@@ -28,7 +28,7 @@ router.post('/reels/upload', upload.single('video'), async (req, res) => {
       video: req.file.filename, 
       caption: req.body.caption  
     });
-    res.redirect('/profile');
+    res.redirect('/dashboard');
   } catch (err) {
     console.error(err);
     res.status(500).send('Error uploading reel');

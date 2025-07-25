@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Messages</title>
+  <link rel="stylesheet" href="/css/chat.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+  <div class="chat-list-container">
+    <h2>Messages</h2>
+    <% if (conversations.length === 0) { %>
+      <p>No conversations yet.</p>
+    <% } else { %>
+      <ul class="chat-list">
+        <% conversations.forEach(conv => { %>
+          <li>
+            <a href="/chat/<%= conv.userInfo._id %>">
+              <img 
+                src="/uploads/<%= conv.userInfo.profilePic || 'default-profile.png' %>" 
+                alt="Profile" 
+                class="chat-avatar"
+                onerror="this.src='/uploads/default-profile.png';"
+              />
+              <div class="chat-user-details">
+                <span class="chat-username"><%= conv.userInfo.username %></span>
+                <span class="chat-time"><%= new Date(conv.lastMessageAt).toLocaleString() %></span>
+              </div>
+            </a>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </div>
+</body>
+</html>

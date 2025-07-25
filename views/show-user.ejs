@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= user.username %>'s Profile</title>
+  <title>
+    <%= user.username %>'s Profile
+  </title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -104,7 +107,6 @@
       color: #333;
     }
 
-    /* Responsive for mobile */
     @media (max-width: 600px) {
       .profile-header {
         flex-direction: column;
@@ -144,7 +146,6 @@
       }
     }
 
-    /* Modal Styles */
     .modal {
       position: fixed;
       top: 0;
@@ -180,235 +181,268 @@
       color: #333;
     }
 
-/* Profile Preview Hover Effect */
-.profile-preview {
-  display: none;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 40px;
-  padding: 10px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 180px;
-  z-index: 10;
-  opacity: 0;
-  transform: translateX(-50%) translateY(10px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
+    .profile-preview {
+      display: none;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 40px;
+      padding: 10px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 180px;
+      z-index: 10;
+      opacity: 0;
+      transform: translateX(-50%) translateY(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
 
-li:hover .profile-preview {
-  display: block;
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
+    li:hover .profile-preview {
+      display: block;
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
 
-/* Button Hover Effect */
-.profile-btn {
-  background-color: #0095f6;
-  color: white;
-  border: none;
-  padding: 8px 18px;
-  font-size: 14px;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
+    .profile-btn {
+      background-color: #0095f6;
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      font-size: 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
 
-.profile-btn:hover {
-  background-color: #007acc;
-  transform: scale(1.05); /* Slight scaling effect on hover */
-}
+    .profile-btn:hover {
+      background-color: #007acc;
+      transform: scale(1.05);
+    }
 
-/* Posts Grid Hover Effect */
-.post:hover {
-  transform: scale(1.02); /* Slight scale effect when hovering over posts */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+    .post:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
 
-.post img {
-  transition: transform 0.3s ease;
-}
+    .post img {
+      transition: transform 0.3s ease;
+    }
 
-.post:hover img {
-  transform: scale(1.05); /* Slight zoom effect for the post image */
-}
+    .post:hover img {
+      transform: scale(1.05);
+    }
 
-/* Modal Hover Effect */
-.modal-content {
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
+    .modal-content {
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
 
-.modal-content:hover {
-  transform: translateY(-5px);
-  opacity: 0.9;
-}
-
-
+    .modal-content:hover {
+      transform: translateY(-5px);
+      opacity: 0.9;
+    }
   </style>
 </head>
+
 <body>
   <%- include('partials/header', { title: 'Search Profile' }) %>
-  <%- include('partials/sidebar') %>
-  <div class="profile-header">
-    <a href="/show-user/<%= user._id %>">
-      <div class="profile-image">
-        <img src="/uploads/<%= user.profilePic || 'default.jpg' %>" 
-             alt="Profile Picture" 
-             style="width: 120px; height: 120px; border-radius: 50%;">
-      </div>
-      <span><%= user.username %></span>
-    </a>
-    
-
-    <div class="profile-info">
-      <h1><%= user.username %></h1>
-      <p class="email"><%= user.email %></p>
-      
-      <div class="profile-stats">
-        <span><strong><%= posts.length %></strong> posts</span>
-        <span class="clickable" onclick="openModal('followers')">
-          <strong class="followers-count"><%= user.followers?.length || 0 %></strong> followers
-        </span>
-        <span class="clickable" onclick="openModal('following')">
-          <strong><%= user.following?.length || 0 %></strong> following
-        </span>
-      </div>
-
-      <% if (user.bio) { %>
-        <p class="bio"><%= user.bio %></p>
-      <% } %>
-
-      <% if (currentUser) { %>
-        <% if (isOwnProfile) { %>
-          <a href="/edit-profile" class="btn btn-primary">Edit Profile</a>
-        <% } else { %>
-          <button id="followBtn" class="profile-btn" onclick="toggleFollow('<%= user._id %>')">
-            <%= currentUser.following?.some(f => f._id.toString() === user._id.toString()) ? 'Unfollow' : 'Follow' %>
-          </button>
-        <% } %>
-      <% } else { %>
-        <button id="followBtn" class="profile-btn" disabled>
-          Please log in to follow
-        </button>
-      <% } %>
-    </div>
-  </div>
-
-  <h2>Posts:</h2>
-  <div class="posts-grid">
-    <% posts.forEach(post => { %>
-      <div class="post">
-        <% if (post.postImage) { %>
-          <img src="<%= post.postImage %>" alt="Post" />
-        <% } %>
-        <p><%= post.caption %></p>
-      </div>
-    <% }) %>
-  </div>
-
-<div id="followersModal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <span onclick="closeModal('followersModal')" class="close">&times;</span>
-    <h3>Followers</h3>
-    <ul style="list-style: none; padding: 0;">
-      <% user.followers?.forEach(follower => { %>
-        <li style="display: flex; align-items: center; margin-bottom: 10px; position: relative;">
-          <img src="/uploads/<%= follower.profilePic || '/uploads/1745863270595.jpg' %>" alt="avatar"
-               style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">
-
-          <a href="/show-user/<%= follower._id %>" style="text-decoration: none; color: #333;">
-            <%= follower.username %>
-          </a>
-
-          <div class="profile-preview" style="display: none; position: absolute; left: 50%; transform: translateX(-50%); top: 40px; padding: 10px; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 180px;">
-            <img src="/uploads/<%= follower.profilePic || '/uploads/1745863270595.jpg' %>" alt="avatar" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
-            <p><strong><%= follower.username %></strong></p>
-            <p><%= follower.bio || "No bio available" %></p>
+    <%- include('partials/sidebar') %>
+      <div class="profile-header">
+        <a href="/show-user/<%= user._id %>">
+          <div class="profile-image">
+            <img src="/uploads/<%= user.profilePic || 'default.jpg' %>" alt="Profile Picture"
+              style="width: 120px; height: 120px; border-radius: 50%;">
           </div>
-        </li>
-      <% }) %>
-    </ul>
-  </div>
-</div>
+          <span>
+            <%= user.username %>
+          </span>
+        </a>
 
 
-<div id="followingModal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <span onclick="closeModal('followingModal')" class="close">&times;</span>
-    <h3>Following</h3>
-    <ul style="list-style: none; padding: 0;">
-      <% user.following?.forEach(followed => { %>
-        <li style="display: flex; align-items: center; margin-bottom: 10px;">
-          <img src="/uploads/<%= followed.profilePic || '/images/default-avatar.jpg' %>" alt="avatar"
-               style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">
-          <a href="/show-user/<%= followed._id %>" style="text-decoration: none; color: #333;">
-            <%= followed.username %>
-          </a>
-        </li>
-      <% }) %>
-    </ul>
-  </div>
-</div>
+        <div class="profile-info">
+          <h1>
+            <%= user.username %>
+          </h1>
+          <p class="email">
+            <%= user.email %>
+          </p>
 
-<script>
+          <div class="profile-stats">
+            <span><strong>
+                <%= posts.length %>
+              </strong> posts</span>
+            <span class="clickable" onclick="openModal('followers')">
+              <strong class="followers-count">
+                <%= user.followers?.length || 0 %>
+              </strong> followers
+            </span>
+            <span class="clickable" onclick="openModal('following')">
+              <strong>
+                <%= user.following?.length || 0 %>
+              </strong> following
+            </span>
+          </div>
 
-  function openModal(type) {
-  if (type === 'followers') {
-    document.getElementById('followersModal').style.display = 'flex';
-  } else if (type === 'following') {
-    document.getElementById('followingModal').style.display = 'flex';
-  }
-}
+          <% if (user.bio) { %>
+            <p class="bio">
+              <%= user.bio %>
+            </p>
+            <% } %>
 
-  function closeModal(id) {
-    document.getElementById(id).style.display = 'none';
-  }
+              <% if (currentUser) { %>
+                <% if (isOwnProfile) { %>
+                  <a href="/edit-profile" class="btn btn-primary">Edit Profile</a>
+                  <% } else { %>
+                    <button id="followBtn" class="profile-btn" onclick="toggleFollow('<%= user._id %>')">
+                      <%= currentUser.following?.some(f=> f._id.toString() === user._id.toString()) ? 'Unfollow' :
+                        'Follow' %>
+                    </button>
+                    <form action="/chat/start" method="POST">
+                      <input type="hidden" name="receiverId" value="<%= user._id %>" />
+                      <textarea name="content" placeholder="Write a message..." required></textarea>
+                      <button type="submit">Send Message</button>
+                    </form>
+                    <% } %>
+                      <% } else { %>
+                        <button id="followBtn" class="profile-btn" disabled>
+                          Please log in to follow
+                        </button>
+                        <% } %>
+        </div>
+      </div>
 
-  async function toggleFollow(userId) {
-    try {
-      const res = await fetch(`/follow/${userId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-      });
+      <h2>Posts:</h2>
+      <div class="posts-grid">
+        <% posts.forEach(post=> { %>
+          <div class="post">
+            <% if (post.postImage) { %>
+              <img src="<%= post.postImage %>" alt="Post" />
+              <% } %>
+                <p>
+                  <%= post.caption %>
+                </p>
+          </div>
+          <% }) %>
+      </div>
 
-      const data = await res.json();
+      <div id="followersModal" class="modal" style="display: none;">
+        <div class="modal-content">
+          <span onclick="closeModal('followersModal')" class="close">&times;</span>
+          <h3>Followers</h3>
+          <ul style="list-style: none; padding: 0;">
+            <% user.followers?.forEach(follower=> { %>
+              <li style="display: flex; align-items: center; margin-bottom: 10px; position: relative;">
+                <img src="/uploads/<%= follower.profilePic || '/uploads/1745863270595.jpg' %>" alt="avatar"
+                  style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">
 
-      if (data.success) {
-        const btn = document.getElementById('followBtn');
-        const followersCountEl = document.querySelector('.followers-count');
+                <a href="/show-user/<%= follower._id %>" style="text-decoration: none; color: #333;">
+                  <%= follower.username %>
+                </a>
 
-        // Toggle button text
-        btn.textContent = data.isFollowing ? 'Unfollow' : 'Follow';
+                <div class="profile-preview"
+                  style="display: none; position: absolute; left: 50%; transform: translateX(-50%); top: 40px; padding: 10px; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 180px;">
+                  <img src="/uploads/<%= follower.profilePic || '/uploads/1745863270595.jpg' %>" alt="avatar"
+                    style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+                  <p><strong>
+                      <%= follower.username %>
+                    </strong></p>
+                  <p>
+                    <%= follower.bio || "No bio available" %>
+                  </p>
+                </div>
+              </li>
+              <% }) %>
+          </ul>
+        </div>
+      </div>
 
-        // Update followers count if available
-        if (followersCountEl) {
-          followersCountEl.textContent = data.followersCount;
+
+      <div id="followingModal" class="modal" style="display: none;">
+        <div class="modal-content">
+          <span onclick="closeModal('followingModal')" class="close">&times;</span>
+          <h3>Following</h3>
+          <ul style="list-style: none; padding: 0;">
+            <% user.following?.forEach(followed=> { %>
+              <li style="display: flex; align-items: center; margin-bottom: 10px;">
+                <img src="/uploads/<%= followed.profilePic || '/images/default-avatar.jpg' %>" alt="avatar"
+                  style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">
+                <a href="/show-user/<%= followed._id %>" style="text-decoration: none; color: #333;">
+                  <%= followed.username %>
+                </a>
+              </li>
+              <% }) %>
+          </ul>
+        </div>
+      </div>
+
+      <script>
+        function openModal(type) {
+          if (type === 'followers') {
+            document.getElementById('followersModal').style.display = 'flex';
+          } else if (type === 'following') {
+            document.getElementById('followingModal').style.display = 'flex';
+          }
         }
-      }
-    } catch (err) {
-      console.error('Follow toggle failed:', err);
-    }
-  }
 
-  document.querySelectorAll('li').forEach(function(item) {
-    item.addEventListener('mouseover', function() {
-      const profilePreview = item.querySelector('.profile-preview');
-      if (profilePreview) {
-        profilePreview.style.display = 'block';
-      }
-    });
-    item.addEventListener('mouseout', function() {
-      const profilePreview = item.querySelector('.profile-preview');
-      if (profilePreview) {
-        profilePreview.style.display = 'none';
-      }
-    });
-  });
-</script>
+        function closeModal(id) {
+          document.getElementById(id).style.display = 'none';
+        }
+
+        async function toggleFollow(userId) {
+          console.log('User ID passed to toggleFollow:', userId);
+
+          if (!userId || userId === 'back') {
+            console.warn('Invalid userId passed to toggleFollow');
+            return;
+          }
+
+          try {
+            const res = await fetch(`/follow/${userId}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (!res.ok) {
+              const htmlText = await res.text();
+              console.error('Non-JSON response received:', htmlText);
+              throw new Error(`Failed request with status: ${res.status}`);
+            }
+
+            const data = await res.json();
+
+            if (data.success) {
+              const btn = document.getElementById('followBtn') || document.querySelector(`[data-user-id="${userId}"]`);
+              const followersCountEl = document.querySelector('.followers-count');
+
+              if (btn) {
+                btn.textContent = data.isFollowing ? 'Unfollow' : 'Follow';
+              }
+
+              if (followersCountEl) {
+                followersCountEl.textContent = data.followersCount;
+              }
+            }
+          } catch (err) {
+            console.error('Follow toggle failed:', err);
+          }
+        }
+
+        document.querySelectorAll('li').forEach(function (item) {
+          item.addEventListener('mouseover', function () {
+            const profilePreview = item.querySelector('.profile-preview');
+            if (profilePreview) profilePreview.style.display = 'block';
+          });
+
+          item.addEventListener('mouseout', function () {
+            const profilePreview = item.querySelector('.profile-preview');
+            if (profilePreview) profilePreview.style.display = 'none';
+          });
+        });
+      </script>
+
 
 </body>
+
 </html>

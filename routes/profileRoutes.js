@@ -25,32 +25,6 @@ const findUserById = async (id) => {
   return await User.findById(id).populate('followers').populate('following');
 };
 
-// View own profile
-// router.get('/profile', isAuthenticated, async (req, res) => {
-//   try {
-//     const user = await User.findById(req.session.userId)
-//       .populate('savedPosts')  // Populate the saved posts
-//       .populate('posts');      // Populate the posts
-
-//     if (!user) return res.status(404).send('User not found');
-
-//     res.render('profile', {
-//       user: user,
-//       posts: user.posts,         // Pass the user's posts to the template
-//       savedPosts: user.savedPosts, // Pass savedPosts to the template
-//       isOwnProfile: true,         // Use logic to determine if it's the own profile
-//       loggedInUserId: req.session.userId,
-//       isFollowing: user.followers.includes(req.session.userId)
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send('Server error');
-//   }
-// });
-
-
-
-
 router.get('/profile', isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.session.userId);
@@ -69,7 +43,17 @@ router.get('/profile/:username', isAuthenticated, async (req, res) => {
 
     if (!user) return res.status(404).send('User not found');
 
-    const posts = await Post.find({ userId: user._id }).sort({ createdAt: -1 });
+    const posts = await Post.find({ userId: user._id })
+  .populate('userId', 'username profilePic')
+  .populate({
+    path: 'comments',
+    populate: {
+      path: 'user',
+      select: 'username profilePic' 
+    }
+  })
+  .sort({ createdAt: -1 });
+
 
     res.render('profile', {
       user,
@@ -84,7 +68,6 @@ router.get('/profile/:username', isAuthenticated, async (req, res) => {
   }
 });
 
-// Edit Profile Page
 router.get('/edit-profile', isAuthenticated, async (req, res) => {
   try {
     const user = await findUserById(req.session.userId);
@@ -95,7 +78,6 @@ router.get('/edit-profile', isAuthenticated, async (req, res) => {
   }
 });
 
-// Handle Edit Profile Form
 router.post('/edit-profile', isAuthenticated, async (req, res) => {
   try {
     const { bio } = req.body;
@@ -107,7 +89,6 @@ router.post('/edit-profile', isAuthenticated, async (req, res) => {
   }
 });
 
-// Settings Page
 router.get('/settings', isAuthenticated, async (req, res) => {
   try {
     const user = await findUserById(req.session.userId);
@@ -118,7 +99,6 @@ router.get('/settings', isAuthenticated, async (req, res) => {
   }
 });
 
-// Handle Settings Update
 router.post('/settings', isAuthenticated, upload.single('profilePicFile'), async (req, res) => {
   try {
     const { username, email, bio, password } = req.body;
@@ -130,7 +110,7 @@ router.post('/settings', isAuthenticated, upload.single('profilePicFile'), async
     if (username) user.username = username;
     if (email) user.email = email;
     if (bio) user.bio = bio;
-    if (password) user.password = password; // ⚠️ Should hash password in production
+    if (password) user.password = password; 
 
     await user.save();
     res.redirect(`/profile/${user.username}`);
@@ -140,7 +120,6 @@ router.post('/settings', isAuthenticated, upload.single('profilePicFile'), async
   }
 });
 
-// Show Followers
 router.get('/profile/:username/followers', isAuthenticated, async (req, res) => {
   try {
     const user = await findUserByUsername(req.params.username);
@@ -151,7 +130,6 @@ router.get('/profile/:username/followers', isAuthenticated, async (req, res) => 
   }
 });
 
-// Show Following
 router.get('/profile/:username/following', isAuthenticated, async (req, res) => {
   try {
     const user = await findUserByUsername(req.params.username);
@@ -162,76 +140,18 @@ router.get('/profile/:username/following', isAuthenticated, async (req, res) => 
   }
 });
 
-// Follow / Unfollow Handlers
-// router.post('/follow/:id', isAuthenticated, async (req, res) => {
-//   try {
-//     const targetUser = await User.findById(req.params.id);
-//     const currentUser = await User.findById(req.session.userId); // or req.user._id
-
-//     if (!targetUser || !currentUser) return res.status(404).send('User not found');
-//     if (targetUser._id.equals(currentUser._id)) return res.status(400).send('Cannot follow yourself');
-
-//     // Check if not already following
-//     if (!currentUser.following.includes(targetUser._id)) {
-//       currentUser.following.push(targetUser._id);
-//       targetUser.followers.push(currentUser._id);
-
-//       await currentUser.save();
-//       await targetUser.save();
-
-//       // ✅ CREATE NOTIFICATION
-//       await Notification.create({
-//         sender: currentUser._id,
-//         receiver: targetUser._id,
-//         type: 'follow',
-//         message: `${currentUser.username} started following you.`,
-//       });
-//       console.log(`✅ Notification created for ${targetUser.username} from ${currentUser.username}`);
-//     }
-    
-//     res.redirect('back');
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send('Error following user');
-//   }
-// });
-
-
-// router.post('/unfollow/:id', isAuthenticated, async (req, res) => {
-//   try {
-//     const targetUser = await User.findById(req.params.id);
-//     const currentUser = await User.findById(req.session.userId);
-
-//     if (!targetUser || !currentUser) return res.status(404).send('User not found');
-
-//     currentUser.following.pull(targetUser._id);
-//     targetUser.followers.pull(currentUser._id);
-
-//     await currentUser.save();
-//     await targetUser.save();
-
-//     res.redirect('back');
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send('Error unfollowing user');
-//   }
-// });
-
-//Saved/Unsaved
 router.get('/save/profile', (req, res) => {
-  res.redirect('/profile'); // Redirect to the logged-in user's profile
+  res.redirect('/profile'); 
 });
 
-// Follow / Unfollow Handlers
 router.post('/follow/:id', isAuthenticated, async (req, res) => {
   try {
     const targetUser = await User.findById(req.params.id);
-    const currentUser = await User.findById(req.session.userId); // or req.user._id
+    const currentUser = await User.findById(req.session.userId); 
 
     if (!targetUser || !currentUser) return res.status(404).send('User not found');
     if (targetUser._id.equals(currentUser._id)) return res.status(400).send('Cannot follow yourself');
 
-    // Check if not already following
     if (!currentUser.following.includes(targetUser._id)) {
       currentUser.following.push(targetUser._id);
       targetUser.followers.push(currentUser._id);
@@ -239,14 +159,13 @@ router.post('/follow/:id', isAuthenticated, async (req, res) => {
       await currentUser.save();
       await targetUser.save();
 
-      // ✅ CREATE NOTIFICATION
       await Notification.create({
         sender: currentUser._id,
         receiver: targetUser._id,
         type: 'follow',
         message: `${currentUser.username} started following you.`,
       });
-      console.log(`✅ Notification created for ${targetUser.username} from ${currentUser.username}`);
+      console.log(`Notification created for ${targetUser.username} from ${currentUser.username}`);
     }
     
     res.redirect('back');
@@ -256,7 +175,7 @@ router.post('/follow/:id', isAuthenticated, async (req, res) => {
   }
 });
 
-// Save Post
+
 router.post('/save/:postId', async (req, res) => {
   const user = await User.findById(req.session.userId);
   if (!user.savedPosts.includes(req.params.postId)) {
@@ -267,7 +186,7 @@ router.post('/save/:postId', async (req, res) => {
 });
 
 router.get('/unsave/profile', (req, res) => {
-  res.redirect('/profile'); // Redirect to the logged-in user's profile
+  res.redirect('/profile'); 
 });
 router.post('/unsave/:postId', async (req, res) => {
   const user = await User.findById(req.session.userId);

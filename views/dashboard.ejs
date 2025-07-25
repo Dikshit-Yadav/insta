@@ -12,36 +12,7 @@
 </head>
 <body>
   <div class="container">
-    <div class="sidebar">
-      <div class="logo">Instagram</div>
-      <nav class="nav-links">
-        <a href="/dashboard"><i class="fas fa-home"></i> Home</a>
-        <a href="/search"><i class="fas fa-search"></i> Search</a>
-        <a href="#"><i class="fas fa-compass"></i> Explore</a>
-        <a href="#"><i class="far fa-play-circle"></i> Reels</a>
-        <a href="#"><i class="far fa-paper-plane"></i> Messages</a>
-        <div class="notification-wrapper">
-          <!-- <a href="/notification" id="notification-toggle">
-            <i class="far fa-heart"></i> Notifications
-            <% if (typeof unreadCount !== 'undefined' && unreadCount > 0) { %>
-              <span class="badge"><%= unreadCount %></span>
-            <% } %>
-          </a> -->
-          <a href="/notification">
-    <i class="far fa-heart"></i> Notifications
-    <% if (typeof unreadCount !== 'undefined' && unreadCount > 0) { %>
-      <span class="badge"><%= unreadCount %></span>
-    <% } %>
-  </a>
-  <a href="/auth/logout">Logout</a>
-        </div>
-        
-        
-        <a href="/posts/upload"><i class="far fa-plus-square"></i> Create</a>
-        <a href="/profile"><i class="far fa-user-circle"></i> Profile</a>
-        <a href="#"><i class="fas fa-bars"></i> More</a>
-      </nav>
-    </div>
+<%- include('partials/sidebar') %>
 
     <div class="main-content">
       <div class="stories-bar">
@@ -64,46 +35,72 @@
       </div>
 
       <div class="feed">
-        <% if (posts && posts.length > 0) { %>
-         <% posts.forEach(post => { %>
-  <div class="post">
-    <% if (post.userId) { %>
-      <div class="post-header">
-        <img src="/uploads/<%= post.userId?.profilePic %>" alt="user" onerror="this.src='/uploads/default-profile.png';" />
-        <p><%= post.userId?.username  || "Unknown"%></p> 
-      </div>
+  <% if (posts && posts.length > 0) { %>
+    <% posts.forEach(post => { %>
+      <div class="post">
+        <% if (post.userId) { %>
+          <div class="post-header">
+            <img src="/uploads/<%= post.userId.profilePic %>" alt="user" onerror="this.src='/uploads/default-profile.png';" />
+            <p><%= post.userId?.username  || "Unknown"%></p> 
+          </div>
+        <% } else { %>
+          <div class="post-header">
+            <img src="/uploads/default-profile.png" alt="default">
+            <p>Unknown User</p>
+          </div>
+        <% } %>
+
+        <img src="<%= post.postImage %>" alt="<%= post.caption %>" class="post-img">
+
+        <div class="post-actions">
+          <i class="far fa-heart"></i>
+          <i class="far fa-comment"></i>
+          <i class="far fa-paper-plane"></i>
+          <i class="far fa-bookmark"></i>
+        </div>
+
+        <div class="likes">100 likes</div>
+
+        <div class="caption">
+          <span><%= post.userId?.username || "Unknown" %></span>
+          <p><%= post.caption %></p>
+        </div>
+
+        <!-- ✅ Comments Section -->
+      <div class="comments-container">
+  <% post.comments.forEach(comment => { %>
+  <div class="comment">
+    <% if (comment.user) { %>
+      <img src="/uploads/<%= comment.user.profilePic || 'default-profile.png' %>" 
+           onerror="this.src='/uploads/default-profile.png';" 
+           alt="pic" width="25">
+      <strong><%= comment.user.username || 'Unknown' %>:</strong>
     <% } else { %>
-      <div class="post-header">
-        <img src="/uploads/default-profile.png" alt="default">
-        <p>Unknown User</p>
-      </div>
+      <img src="/uploads/default-profile.png" width="25">
+      <strong>Unknown:</strong>
     <% } %>
 
-    <img src="<%= post.postImage %>" alt="<%= post.caption %>" class="post-img">
-    <div class="post-actions">
-      <i class="far fa-heart"></i>
-      <i class="far fa-comment"></i>
-      <i class="far fa-paper-plane"></i>
-      <i class="far fa-bookmark"></i>
-    </div>
-    <div class="likes">100 likes</div>
-    <div class="caption">
-<span><%= post.userId?.username || "Unknown" %></span>
-      <p><%= post.caption %></p>
-    </div>
+    <%= comment.content || 'No comment content' %>
   </div>
-<% }); %>
+<% }) %>
 
-        <% } else { %>
-          <p>No posts to show yet.</p>
-        <% } %>
+</div>
+
+
+
       </div>
-      <!-- <section id="notifications">
+    <% }); %>
+  <% } else { %>
+    <p>No posts to show yet.</p>
+  <% } %>
+</div>
+
+      <section id="notifications">
         <h3>Recent Notifications</h3>
         <ul>
          
         </ul>
-      </section> -->
+      </section>
     </div>
 
     <div class="right-sidebar">

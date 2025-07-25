@@ -26,7 +26,16 @@
                 <img src="<%= story.media %>" alt="Story" draggable="false">
             <% } %>
             <p>Viewed by <%= story.views.length %> user(s)</p>
-            <pre><%= JSON.stringify(story.views) %></pre>
+           <div class="viewed-by">
+  <strong>Viewed by:</strong>
+  <ul>
+    <% story.views.forEach(viewer => { %>
+  <li>@<%= viewer.username %></li>
+<% }) %>
+
+  </ul>
+</div>
+
 
         </div>
 

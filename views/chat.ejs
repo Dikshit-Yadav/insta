@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chat with <%= receiver.username %></title>
+  <link rel="stylesheet" href="/css/chat.css" />
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">
+      <img src="/uploads/<%= receiver.profilePic %>" alt="pic" class="chat-header-img" onerror="this.src='/uploads/default-profile.png';">
+      <h2><%= receiver.username %></h2>
+    </div>
+
+    <div class="chat-box" id="chat-box">
+      <% messages.forEach(msg => { %>
+        <div class="message <%= msg.sender.toString() === user._id.toString() ? 'sent' : 'received' %>">
+          <p><%= msg.content %></p>
+          <span><%= new Date(msg.createdAt).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) %></span>
+        </div>
+      <% }) %>
+    </div>
+
+    <form id="chat-form">
+      <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off" required />
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+ <script>
+  const socket = io();
+  const senderId = "<%= user._id %>";
+  const receiverId = "<%= receiver._id %>";
+  const chatBox = document.getElementById("chat-box");
+  const form = document.getElementById("chat-form");
+  const input = document.getElementById("message-input");
+
+  let skip = 20;
+  let loading = false;
+  let hasMore = true;
+
+  function createMessageHTML(message) {
+    const div = document.createElement("div");
+    div.classList.add("message", message.sender === senderId ? "sent" : "received");
+    div.innerHTML = `<p>${message.content}</p><span>${new Date(message.createdAt).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</span>`;
+    return div;
+  }
+
+  socket.emit('joinRoom', { senderId, receiverId });
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const content = input.value.trim();
+    if (content) {
+      socket.emit("sendMessage", { senderId, receiverId, content });
+      input.value = "";
+    }
+  });
+
+  socket.on("receiveMessage", (message) => {
+    const div = createMessageHTML(message);
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  });
+
+  chatBox.addEventListener("scroll", async () => {
+    if (chatBox.scrollTop < 50 && !loading && hasMore) {
+      loading = true;
+      const previousHeight = chatBox.scrollHeight;
+
+      const res = await fetch(`/chat/messages/${receiverId}?skip=${skip}`);
+      const olderMessages = await res.json();
+
+      if (olderMessages.length === 0) {
+        hasMore = false;
+        return;
+      }
+
+      olderMessages.forEach(msg => {
+        const msgDiv = createMessageHTML(msg);
+        chatBox.insertBefore(msgDiv, chatBox.firstChild);
+      });
+
+      skip += olderMessages.length;
+      chatBox.scrollTop = chatBox.scrollHeight - previousHeight;
+      loading = false;
+    }
+  });
+
+  chatBox.scrollTop = chatBox.scrollHeight;
+</script>
+
+</body>
+</html>
