@@ -154,17 +154,32 @@
           </div>
 
           <div id="reels" class="tab-content">
-            <p>No Reels uploaded yet.</p>
+            <div class="reels-section">
+  <% if (reels.length > 0) { %>
+    <% reels.forEach(reel => { %>
+      <div class="reel">
+        <video autoplay controls>
+                <source src="/uploads/reels/<%= reel.video %>" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+        <p><%= reel.caption %></p>
+      </div>
+    <% }) %>
+  <% } else { %>
+    <p>No reels uploaded yet</p>
+  <% } %>
+</div>
           </div>
 
           <div id="saved" class="tab-content">
             <div class="profile-saved-posts">
-            < savedPosts.forEach(post => { >
-              <div class="post-item">
-                <img src="<%= post.postImage %>" alt="Post Image">
-              </div>
-            < }) %>
-          </div>
+              <% savedPosts.forEach(post=> { %>
+                <div class="post-item">
+                  <img src="<%= post.postImage %>" alt="Saved Post">
+                </div>
+                <% }) %>
+
+            </div>
           </div>
 
     </div>

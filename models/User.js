@@ -17,7 +17,8 @@ const userSchema = new mongoose.Schema({
   }],  
   savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
   followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-  following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+  following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  reels: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Reel' }]
 });
 
 module.exports = mongoose.model('User', userSchema);

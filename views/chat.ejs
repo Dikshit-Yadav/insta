@@ -7,6 +7,8 @@
   <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
+  <%- include('partials/header', { title: 'Search Profile' }) %>
+        <%- include('partials/sidebar') %>
   <div class="chat-container">
     <div class="chat-header">
       <img src="/uploads/<%= receiver.profilePic %>" alt="pic" class="chat-header-img" onerror="this.src='/uploads/default-profile.png';">

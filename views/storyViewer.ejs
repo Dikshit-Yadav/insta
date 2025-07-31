@@ -4,81 +4,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= story.user.username %>'s Story</title>
+    <title>
+        <%= story.user.username %>'s Story
+    </title>
     <link rel="stylesheet" href="/css/storyViewer.css">
 </head>
 
 <body>
-  <%- include('partials/header', { title: 'Search Profile' }) %>
-  <%- include('partials/sidebar') %>
-    <div class="story-viewer">
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
+    <%- include('partials/header', { title: 'Search Profile' }) %>
+        <%- include('partials/sidebar') %>
+            <div class="story-viewer">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
 
-        <div class="story-content">
-            <% if (story.media.includes('video')) { %>
-                <video controls autoplay>
-                    <source src="<%= story.media %>" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            <% } else { %>
-                <img src="<%= story.media %>" alt="Story" draggable="false">
-            <% } %>
-            <p>Viewed by <%= story.views.length %> user(s)</p>
-           <div class="viewed-by">
-  <strong>Viewed by:</strong>
-  <ul>
-    <% story.views.forEach(viewer => { %>
-  <li>@<%= viewer.username %></li>
-<% }) %>
+                <div class="story-content">
+                    <% if (story.media.includes('.mp4')) { %>
+                        <video  autoplay>
+                            <source src="<%= story.media %>" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <% } else { %>
+                            <img src="<%= story.media %>" alt="Story" draggable="false">
+                            <% } %>
+                                <p>Viewed by <%= story.views.length %> user(s)</p>
+                                <div class="viewed-by">
+                                    <strong>Viewed by:</strong>
+                                    <ul>
+                                        <% story.views.forEach(viewer=> { %>
+                                            <li>@<%= viewer.username %>
+                                            </li>
+                                            <% }) %>
 
-  </ul>
-</div>
+                                    </ul>
+                                </div>
+                </div>
 
+                <div class="story-navigation">
+                    <button onclick="navigateStory(prevStoryId)">Previous</button>
+                    <button onclick="navigateStory(nextStoryId)">Next</button>
+                </div>
 
-        </div>
+                <button class="close-btn" onclick="closeViewer()">Close</button>
+            </div>
 
-        <div class="story-navigation">
-            <button onclick="navigateStory(prevStoryId)">Previous</button>
-            <button onclick="navigateStory(nextStoryId)">Next</button>
-        </div>
+            <script>
+                const prevStoryId = "<%= prevStory ? prevStory._id : '' %>";
+                const nextStoryId = "<%= nextStory ? nextStory._id : '' %>";
 
-        <button class="close-btn" onclick="closeViewer()">Close</button>
-    </div>
-
-    <script>
-        const prevStoryId = "<%= prevStory ? prevStory._id : '' %>";
-        const nextStoryId = "<%= nextStory ? nextStory._id : '' %>";
-
-        function closeViewer() {
-            window.location.href = '/profile';
-        }
-
-        function navigateStory(storyId) {
-            if (storyId) {
-                window.location.href = `/story/${storyId}`;
-            }
-        }
-
-        const duration = 5000; 
-        const progressFill = document.getElementById('progressFill');
-
-        function startProgressBar() {
-            progressFill.style.transition = `width ${duration}ms linear`;
-            progressFill.style.width = '100%';
-
-            setTimeout(() => {
-                if (nextStoryId) {
-                    window.location.href = '/story/' + nextStoryId;
-                } else {
-                    closeViewer();
+                function closeViewer() {
+                    window.location.href = '/profile';
                 }
-            }, duration);
-        }
 
-        window.onload = startProgressBar;
-    </script>
+                function navigateStory(storyId) {
+                    if (storyId) {
+                        window.location.href = `/story/${storyId}`;
+                    }
+                }
+
+                const duration = 15000;
+                const progressFill = document.getElementById('progressFill');
+
+                function startProgressBar() {
+                    progressFill.style.transition = `width ${duration}ms linear`;
+                    progressFill.style.width = '100%';
+
+                    setTimeout(() => {
+                        if (nextStoryId) {
+                            window.location.href = '/story/' + nextStoryId;
+                        } else {
+                            closeViewer();
+                        }
+                    }, duration);
+                }
+
+                window.onload = startProgressBar;
+            </script>
 
 </body>
 

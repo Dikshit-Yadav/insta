@@ -25,28 +25,6 @@ router.post('/start', async (req, res) => {
     res.status(500).send("Failed to send message");
   }
 });
-
-// router.post('/start', async (req, res) => {
-//   const senderId = req.session.userId;
-//   const { receiverId, content } = req.body;
-
-//   if (!senderId || !receiverId || !content) {
-//     return res.status(400).send("Missing data");
-//   }
-
-//   try {
-//     await Message.create({
-//       sender: senderId,
-//       receiver: receiverId,
-//       content
-//     });
-
-//     res.redirect('/chat');
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send("Failed to send message");
-//   }
-// });
 router.get('/:userId', async (req, res) => {
   if (!req.session.userId) return res.redirect('/login');
 

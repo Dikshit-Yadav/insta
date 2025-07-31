@@ -4,6 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const User = require('../models/User');
 const Post = require('../models/Post');
+const Reel = require('../models/Reel');
 const Notification = require('../models/Notification');
 
 const storage = multer.diskStorage({
@@ -44,29 +45,46 @@ router.get('/profile/:username', isAuthenticated, async (req, res) => {
     if (!user) return res.status(404).send('User not found');
 
     const posts = await Post.find({ userId: user._id })
-  .populate('userId', 'username profilePic')
-  .populate({
-    path: 'comments',
-    populate: {
-      path: 'user',
-      select: 'username profilePic' 
-    }
-  })
-  .sort({ createdAt: -1 });
+      .populate('userId', 'username profilePic')
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'user',
+          select: 'username profilePic'
+        }
+      })
+      .sort({ createdAt: -1 });
+    const savedPosts = await Post.find({
+      _id: { $in: user.savedPosts }
+    }).sort({ createdAt: -1 });
+
+    const reels = await Reel.find({ user: user._id }).sort({ createdAt: -1 });
 
 
+    console.log("reel:", reels);
     res.render('profile', {
       user,
       posts,
+      savedPosts,
+      reels,
       isOwnProfile: req.session.username === username,
       loggedInUserId: req.session.userId,
       isFollowing: user.followers.some(follower => follower._id.toString() === req.session.userId)
     });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Server error');
+    res.status(500).send('Server error on load profile');
   }
 });
+
+router.get('/reels',isAuthenticated, async(req,res)=>{
+  try{
+    req.render("uploadReel.ejs");
+  }catch{
+    console.error(err);
+    res.status(500).send('Server error on load reels');
+  }
+})
 
 router.get('/edit-profile', isAuthenticated, async (req, res) => {
   try {
@@ -110,7 +128,7 @@ router.post('/settings', isAuthenticated, upload.single('profilePicFile'), async
     if (username) user.username = username;
     if (email) user.email = email;
     if (bio) user.bio = bio;
-    if (password) user.password = password; 
+    if (password) user.password = password;
 
     await user.save();
     res.redirect(`/profile/${user.username}`);
@@ -141,13 +159,13 @@ router.get('/profile/:username/following', isAuthenticated, async (req, res) => 
 });
 
 router.get('/save/profile', (req, res) => {
-  res.redirect('/profile'); 
+  res.redirect('/profile');
 });
 
 router.post('/follow/:id', isAuthenticated, async (req, res) => {
   try {
     const targetUser = await User.findById(req.params.id);
-    const currentUser = await User.findById(req.session.userId); 
+    const currentUser = await User.findById(req.session.userId);
 
     if (!targetUser || !currentUser) return res.status(404).send('User not found');
     if (targetUser._id.equals(currentUser._id)) return res.status(400).send('Cannot follow yourself');
@@ -167,7 +185,7 @@ router.post('/follow/:id', isAuthenticated, async (req, res) => {
       });
       console.log(`Notification created for ${targetUser.username} from ${currentUser.username}`);
     }
-    
+
     res.redirect('back');
   } catch (err) {
     console.error(err);
@@ -186,7 +204,7 @@ router.post('/save/:postId', async (req, res) => {
 });
 
 router.get('/unsave/profile', (req, res) => {
-  res.redirect('/profile'); 
+  res.redirect('/profile');
 });
 router.post('/unsave/:postId', async (req, res) => {
   const user = await User.findById(req.session.userId);

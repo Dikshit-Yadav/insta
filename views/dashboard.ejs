@@ -1,140 +1,234 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Dashboard</title>
-  <link rel="stylesheet" href="/css/styles.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Billabong&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
-<body>
-  <div class="container">
-<%- include('partials/sidebar') %>
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+   <link rel="icon" type="image/jpg" href="https://cdn.pixabay.com/photo/2016/08/09/17/52/instagram-1581266_1280.jpg">
 
-    <div class="main-content">
-      <div class="stories-bar">
-        <div class="add-story">
-          <a href="/upload-story"><i class="fas fa-plus-circle"></i> Add Story</a>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Billabong&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  </head>
+  <body>
+    <div class="container">
+  <%- include('partials/sidebar') %>
+
+      <div class="main-content">
+        <div class="stories-bar">
+          <div class="add-story">
+            <a href="/upload-story"><i class="fas fa-plus-circle"></i> Add Story</a>
+          </div>
+
+          <% if (stories && stories.length > 0) { %>
+            <% stories.forEach(s => { %>
+              <div class="story-preview">
+                <a href="/story/<%= s._id %>">
+                  <img src="/uploads/<%= s.user.profilePic %>" alt="story" onerror="this.src='/images/default-profile.png';" />
+                  <p><%= s.user.username %></p>
+                </a>
+              </div>
+            <% }) %>
+          <% } else { %>
+            <p>No active stories</p>
+          <% } %>
         </div>
 
-        <% if (stories && stories.length > 0) { %>
-          <% stories.forEach(s => { %>
-            <div class="story-preview">
-              <a href="/story/<%= s._id %>">
-                <img src="/uploads/<%= s.user.profilePic %>" alt="story" onerror="this.src='/images/default-profile.png';" />
-                <p><%= s.user.username %></p>
-              </a>
+    <div class="feed">
+    <% if (posts && posts.length > 0) { %>
+      <% posts.forEach(post => { %>
+        <div class="post">
+
+            <% if (post.userId) { %>
+              <div class="post-header">
+                <img src="/uploads/<%= post.userId.profilePic %>" alt="user" onerror="this.src='/uploads/default-profile.png';" />
+                <p><%= post.userId.username || "Unknown" %></p> 
+              </div>
+            <% } else { %>
+              <div class="post-header">
+                <img src="/uploads/default-profile.jpg" alt="default">
+                <p>Unknown User</p>
+              </div>
+            <% } %>
+
+          <img src="<%= post.postImage %>" alt="<%= post.caption %>" class="post-img">
+
+          <form action="/posts/<%= post._id %>/like" method="POST" style="display:inline;">
+            <button type="submit" class="like-btn">
+              <% if (post.likes.includes(loggedInUserId)) { %>
+                ❤️
+              <% } else { %>
+                🤍
+              <% } %>
+              <span><%= post.likes.length %> likes</span>
+            </button>
+          </form>
+
+          <% if (user && user.savedPosts && user.savedPosts.includes(post._id)) { %>
+            <form action="/unsave/<%= post._id %>" method="POST" style="display:inline;">
+              <button type="submit">Unsave</button>
+            </form>
+          <% } else { %>
+            <form action="/save/<%= post._id %>" method="POST" style="display:inline;">
+              <button type="submit">Save</button>
+            </form>
+          <% } %>
+
+          <div class="caption">
+            <span><%= post.userId?.username || "Unknown" %></span>
+            <p><%= post.caption %></p>
+          </div>
+
+          <div class="comments-container">
+            <% post.comments.forEach(comment => { %>
+              <div class="comment">
+                <% if (comment.user) { %>
+                  <img src="/uploads/<%= comment.user.profilePic || 'default-profile.png' %>" 
+                      onerror="this.src='/uploads/default-profile.png';" 
+                      alt="pic" width="25">
+                  <strong><%= comment.user.username || 'Unknown' %>:</strong>
+                <% } else { %>
+                  <img src="/uploads/default-profile.png" width="25">
+                  <strong>Unknown:</strong>
+                <% } %>
+                <%= comment.content || 'No comment content' %>
+              </div>
+            <% }) %>
+          </div>
+
+          <form action="/posts/<%= post._id %>/comment" method="POST" class="comment-form">
+            <input type="text" name="comment" placeholder="Add a comment..." required>
+            <button type="submit">Post</button>
+          </form>
+
+        </div>
+      <% }); %>
+    <% } else { %>
+      <p>No posts to show yet.</p>
+    <% } %>
+
+     
+
+ <% if (reels && reels.length > 0) { %>
+  <% reels.forEach(reel => { %>
+    <div class="reel">
+      <% if (reel.user) { %>
+       
+        <div class="post-header">
+          <img src="/uploads/<%= reel.user.profilePic %>" alt="user" 
+               onerror="this.src='/uploads/default-profile.png';" />
+          <p><%= reel.user.username || "Unknown" %></p> 
+        </div>
+      <% } else { %>
+        <div class="post-header">
+          <img src="/uploads/default-profile.jpg" alt="default">
+          <p>Unknown User</p>
+        </div>
+      <% } %>
+
+     <video autoplay muted loop playsinline class="reel-video" id="reel-<%= reel._id %>">
+  <source src="/uploads/reels/<%= reel.video %>" type="video/mp4">
+</video>
+    <button class="volume-btn" onclick="toggleMute('<%= reel._id %>')">
+    🔈
+  </button>
+
+
+      <p class="reel-caption"><%= reel.caption %></p>
+
+      <% if (reel.likes && reel.likes.includes(loggedInUserId)) { %>
+        <form action="/reels/<%= reel._id %>/like" method="POST" style="display:inline;">
+          <button type="submit" class="like-btn">❤️ <span><%= reel.likes.length %></span></button>
+        </form>
+      <% } else { %>
+        <form action="/reels/<%= reel._id %>/like" method="POST" style="display:inline;">
+          <button type="submit" class="like-btn">🤍 <span><%= reel.likes.length %></span></button>
+        </form>
+      <% } %>
+
+      <div class="comments-container">
+        <% if (reel.comments && reel.comments.length > 0) { %>
+          <% reel.comments.forEach(comment => { %>
+            <div class="comment">
+              <% if (comment.user) { %>
+                <img src="/uploads/<%= comment.user.profilePic || 'default-profile.jpg' %>" 
+                     onerror="this.src='/uploads/default-profile.jpg';" alt="pic" width="25">
+                <strong><%= comment.user.username || 'Unknown' %>:</strong>
+              <% } else { %>
+                <img src="/uploads/default-profile.png" width="25">
+                <strong>Unknown:</strong>
+              <% } %>
+              <%= comment.content || 'No comment content' %>
             </div>
           <% }) %>
         <% } else { %>
-          <p>No active stories</p>
+          <p class="no-comments">No comments yet</p>
         <% } %>
       </div>
 
-      <div class="feed">
-  <% if (posts && posts.length > 0) { %>
-    <% posts.forEach(post => { %>
-      <div class="post">
-        <% if (post.userId) { %>
-          <div class="post-header">
-            <img src="/uploads/<%= post.userId.profilePic %>" alt="user" onerror="this.src='/uploads/default-profile.png';" />
-            <p><%= post.userId?.username  || "Unknown"%></p> 
-          </div>
-        <% } else { %>
-          <div class="post-header">
-            <img src="/uploads/default-profile.png" alt="default">
-            <p>Unknown User</p>
-          </div>
-        <% } %>
+      <form action="/reels/<%= reel._id %>/comment" method="POST" class="comment-form">
+        <input type="text" name="comment" placeholder="Add a comment..." required>
+        <button type="submit">Post</button>
+      </form>
 
-        <img src="<%= post.postImage %>" alt="<%= post.caption %>" class="post-img">
+    </div>
+  <% }) %>
+<% } else { %>
+  <p>No reels uploaded yet</p>
+<% } %>
 
-        <div class="post-actions">
-          <i class="far fa-heart"></i>
-          <i class="far fa-comment"></i>
-          <i class="far fa-paper-plane"></i>
-          <i class="far fa-bookmark"></i>
-        </div>
+      
 
-        <div class="likes">100 likes</div>
-
-        <div class="caption">
-          <span><%= post.userId?.username || "Unknown" %></span>
-          <p><%= post.caption %></p>
-        </div>
-
-        <!-- ✅ Comments Section -->
-      <div class="comments-container">
-  <% post.comments.forEach(comment => { %>
-  <div class="comment">
-    <% if (comment.user) { %>
-      <img src="/uploads/<%= comment.user.profilePic || 'default-profile.png' %>" 
-           onerror="this.src='/uploads/default-profile.png';" 
-           alt="pic" width="25">
-      <strong><%= comment.user.username || 'Unknown' %>:</strong>
-    <% } else { %>
-      <img src="/uploads/default-profile.png" width="25">
-      <strong>Unknown:</strong>
-    <% } %>
-
-    <%= comment.content || 'No comment content' %>
   </div>
-<% }) %>
-
-</div>
-
-
 
       </div>
-    <% }); %>
-  <% } else { %>
-    <p>No posts to show yet.</p>
-  <% } %>
-</div>
 
-      <section id="notifications">
-        <h3>Recent Notifications</h3>
-        <ul>
-         
-        </ul>
-      </section>
-    </div>
-
-    <div class="right-sidebar">
-      <div class="suggestions">
-        <p>Suggested for you</p>
-        <div class="suggested-user">
-          <p><a>User 1</a> <a href="#">Follow</a></p>
-        </div>
-        <div class="suggested-user">
-          <p><a>User 2</a> <a href="#">Follow</a></p>
+      <div class="right-sidebar">
+        <div class="suggestions">
+          <p>Suggested for you</p>
+          <div class="suggested-user">
+            <p><a>User 1</a> <a href="#">Follow</a></p>
+          </div>
+          <div class="suggested-user">
+            <p><a>User 2</a> <a href="#">Follow</a></p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <script>
-    const toggle = document.getElementById('notification-toggle');
-    const dropdown = document.getElementById('notification-dropdown');
-  
-    toggle.addEventListener('mouseenter', () => {
-      dropdown.style.display = 'block';
-    });
-  
-    toggle.addEventListener('mouseleave', () => {
-      setTimeout(() => dropdown.style.display = 'none', 300);
-    });
-  
-    dropdown.addEventListener('mouseenter', () => {
-      dropdown.style.display = 'block';
-    });
-  
-    dropdown.addEventListener('mouseleave', () => {
-      dropdown.style.display = 'none';
-    });
-  </script>
-  
-</body>
-</html>
+    <script>
+      const toggle = document.getElementById('notification-toggle');
+      const dropdown = document.getElementById('notification-dropdown');
+    
+      toggle.addEventListener('mouseenter', () => {
+        dropdown.style.display = 'block';
+      });
+    
+      toggle.addEventListener('mouseleave', () => {
+        setTimeout(() => dropdown.style.display = 'none', 300);
+      });
+    
+      dropdown.addEventListener('mouseenter', () => {
+        dropdown.style.display = 'block';
+      });
+    
+      dropdown.addEventListener('mouseleave', () => {
+        dropdown.style.display = 'none';
+      });
+      function toggleMute(reelId) {
+    const video = document.getElementById(`reel-${reelId}`);
+    const button = event.target;
+
+    if (video.muted) {
+      video.muted = false;
+      button.textContent = "🔊";
+    } else {
+      video.muted = true;
+      button.textContent = "🔈";
+    }
+  }
+    </script>
+    
+  </body>
+  </html>
