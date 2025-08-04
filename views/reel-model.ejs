@@ -1,0 +1,45 @@
+<div class="user-info">
+  <img src="/uploads/<%= reel.user.profilePic|| 'default-profile.jpg' %>"/>
+  <p><%= reel.user.username || "Unknown" %></p>
+</div>
+<div class="modal-media">
+
+    <video src="/uploads/reels/<%= reel.video %>"  autoplay muted></video>
+    <button class="volume-btn" onclick="toggleMute('<%= reel._id %>')">🔈</button>
+</div>
+<div class="caption">
+  <%= reel.caption %>
+</div>
+
+<script>
+  function toggleMute(reelId) {
+    const video = document.getElementById(`reel-${reelId}`);
+    const button = event.target;
+
+    if (video.muted) {
+      video.muted = false;
+      button.textContent = "🔊";
+    } else {
+      video.muted = true;
+      button.textContent = "🔈";
+    }
+  }
+async function openPost(postId) {
+  const res = await fetch(`/post/${postId}`);
+  const html = await res.text();
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('postModal').style.display = 'flex';
+}
+
+async function openReel(reelId) {
+  const res = await fetch(`/reel/${reelId}`);
+  const html = await res.text();
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('postModal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('postModal').style.display = 'none';
+}
+</script>
+    

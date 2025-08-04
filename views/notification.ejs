@@ -8,7 +8,7 @@
     <div class="notification-list">
       <% notifications.forEach(n => { %>
         <div class="notification-item">
-          <img src="/uploads/<%= n.sender.profilePic %>" alt="user" onerror="this.src='/images/default-profile.png';">
+          <img src="/uploads/<%= n.sender.profilePic %>" alt="user" onerror="this.src='/uploads/default-profile.jpg';">
           <div class="notification-content">
             <p>
               <% if (n.type === 'like') { %><span class="emoji">❤️</span>

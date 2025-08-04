@@ -403,3 +403,134 @@ body {
   color: #888;
   font-size: 13px;
 }
+/* 
+.right-sidebar {
+  width: 280px;
+  padding: 15px;
+  background-color: #fafafa;
+  border-left: 1px solid #e0e0e0;
+  position: sticky;
+  top: 80px;
+  height: fit-content;
+  font-family: 'Helvetica', sans-serif;
+}
+
+.suggestions {
+  margin-top: 20px;
+}
+
+.suggestions p {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.suggested-user {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8px 0;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background 0.3s ease;
+}
+
+.suggested-user:hover {
+  background-color: #f0f0f0;
+}
+
+.suggested-user a {
+  text-decoration: none;
+  color: #007aff;
+  margin: 0 5px;
+  font-size: 14px;
+}
+
+.suggested-user form button {
+  background-color: #0095f6;
+  border: none;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.suggested-user form button:hover {
+  background-color: #0077cc;
+} */
+
+
+
+
+.right-sidebar {
+  width: 280px;
+  padding: 15px 20px;
+  background-color: #fff;
+  border-left: 1px solid #e6e6e6;
+  position: sticky;
+  top: 80px;
+  height: fit-content;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  box-shadow: 0 0 4px rgba(0,0,0,0.05);
+}
+
+.suggestions {
+  margin-top: 20px;
+}
+
+.suggestions p {
+  font-weight: 600;
+  color: #262626;
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+
+.suggested-user {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #efefef;
+}
+
+.suggested-user:last-child {
+  border-bottom: none;
+}
+
+.suggested-user img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.suggested-user a {
+  text-decoration: none;
+  color: #00376b;
+  font-size: 14px;
+  margin-right: 10px;
+  position: relative;
+  bottom: 10px;
+}
+
+.suggested-user form {
+  margin: 0;
+}
+
+.suggested-user form button {
+  background-color: #0095f6;
+  border: none;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.suggested-user form button:hover {
+  background-color: #006fd6;
+}

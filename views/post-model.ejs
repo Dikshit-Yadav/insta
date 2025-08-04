@@ -1,0 +1,41 @@
+<div class="user-info">
+  <img src="/uploads/<%= post.userId.profilePic %>" alt="user"
+       onerror="this.src='/uploads/default-profile.jpg';" />
+  <p><%= post.userId.username || "Unknown" %></p>
+</div>
+<div class="modal-media">
+  <% if (post.postImage) { %>
+    <img src="<%= post.postImage %>" alt="Post">
+  <% } else if (post.postVideo) { %>
+    <video src="<%= post.postVideo %>" controls autoplay muted></video>
+  <% } %>
+</div>
+<div class="caption">
+  <%= post.caption %>
+</div>
+
+<script>
+  async function openModal(type, id) {
+    const modal = document.getElementById('postModal');
+    const modalBody = document.getElementById('modal-body');
+
+    modalBody.innerHTML = '<p style="text-align:center;">Loading...</p>';
+    modal.style.display = 'flex';
+
+    try {
+      const res = await fetch(`/${type}/${id}`);
+      const html = await res.text();
+      modalBody.innerHTML = html;
+    } catch (err) {
+      modalBody.innerHTML = '<p style="color:red;text-align:center;">Failed to load content</p>';
+    }
+  }
+
+  function closeModal() {
+    document.getElementById('postModal').style.display = 'none';
+  }
+
+  document.getElementById('postModal').addEventListener('click', function (e) {
+    if (e.target.id === 'postModal') closeModal();
+  });
+</script>

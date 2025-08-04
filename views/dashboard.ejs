@@ -186,18 +186,28 @@
       </div>
 
       <div class="right-sidebar">
-        <div class="suggestions">
-          <p>Suggested for you</p>
-          <div class="suggested-user">
-            <p><a>User 1</a> <a href="#">Follow</a></p>
-          </div>
-          <div class="suggested-user">
-            <p><a>User 2</a> <a href="#">Follow</a></p>
-          </div>
+         <p>Suggested for you</p>
+  <% if (suggestedUsers && suggestedUsers.length > 0) { %>
+    <div class="suggestions">
+      <% suggestedUsers.forEach(user => { %>
+        <div class="suggested-user">
+          <p>
+            <img src="/uploads/<%= user.profilePic %>" alt="user" 
+               onerror="this.src='/uploads/default-profile.png';" />
+            <a href="/profile/<%= user.username %>"><%= user.username %></a>
+            <form action="/follow/<%= user._id %>" method="POST" style="display:inline;">
+              <button type="submit">Follow</button>
+            </form>
+          </p>
         </div>
-      </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+
     </div>
     <script>
+      
       const toggle = document.getElementById('notification-toggle');
       const dropdown = document.getElementById('notification-dropdown');
     

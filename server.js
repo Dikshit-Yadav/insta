@@ -7,7 +7,7 @@ const path = require('path');
 const session = require('express-session');
 const nodemailer = require('nodemailer');
 const server = http.createServer(app);  
-const io = socketIO(server);           
+const io = socketIO(server);
 
 
 const authRoutes = require('./routes/auth');
@@ -20,7 +20,7 @@ const dashboardRoutes = require('./routes/dashboard');
 const postRoutes = require('./routes/postRoutes');
 const postsApiRoutes = require('./routes/posts'); 
 const userRoutes = require('./routes/user');
-const { followUser } = require('./routes/controllers/followUser');
+const { followUser } = require('./controllers/followUserController');
 const notificationRoutes = require('./routes/notifications');
 const chatListRoutes = require('./routes/chatList');
 const chatRoutes = require('./routes/chat');

@@ -3,6 +3,7 @@
   flex-direction: column;
   gap: 15px;
   margin-top: 20px;
+  margin-left: 50px;
 }
 
 .notification-item {

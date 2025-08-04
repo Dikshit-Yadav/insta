@@ -2,21 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Notification = require('../models/Notification');
 
-router.get('/notifications', async (req, res) => {
-  if (!req.session.userId) {
-    return res.redirect('/login');
-  }
+const { handelNotification } = require('../controllers/notificationController');
 
-  try {
-    const notifications = await Notification.find({ receiver: req.session.userId })
-      .populate('sender', 'username profilePic')
-      .sort({ createdAt: -1 });
-
-    res.render('notification', { notifications, title: "Notifications" });
-  } catch (error) {
-    console.error('Error fetching notifications:', error);
-    res.status(500).send('Server Error on notification');
-  }
-});
+router.get('/notifications', handelNotification);
 
 module.exports = router;
