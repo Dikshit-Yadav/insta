@@ -1,17 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Upload Story</title>
-  <link rel="stylesheet" href="/css/styles.css">
-</head>
-<body>
-  <h1>Upload Story</h1>
-  <form action="/upload-story" method="POST" enctype="multipart/form-data">
-    <label for="storyImage">Choose a story image/video:</label>
-    <input type="file" name="storyImage" accept="image/*,video/*" required>
-    <button type="submit">Upload Story</button>
+<%- include('partials/header', { title: 'Upload Story' }) %>
+<%- include('partials/sidebar') %>
+
+<div class="upload-story-container">
+  <h1>Upload a Story</h1>
+
+  <form action="/upload-story" method="POST" enctype="multipart/form-data" class="upload-form">
+    
+    <label for="storyImage">Take a picture or video (Front Camera):</label>
+    <input
+      type="file"
+      name="storyImage"
+      id="storyImage"
+      accept="image/*,video/*"
+      capture="user"
+      required
+    >
+
+    <button type="submit" class="upload-btn">Upload Story</button>
   </form>
-  <a href="/dashboard">Back to Dashboard</a>
-</body>
-</html>
+</div>

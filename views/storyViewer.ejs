@@ -27,25 +27,29 @@
                         <% } else { %>
                             <img src="<%= story.media %>" alt="Story" draggable="false">
                             <% } %>
-                                <p>Viewed by <%= story.views.length %> user(s)</p>
                                 <div class="viewed-by">
-                                    <strong>Viewed by:</strong>
-                                    <ul>
-                                        <% story.views.forEach(viewer=> { %>
-                                            <li>@<%= viewer.username %>
-                                            </li>
-                                            <% }) %>
+    <strong>Viewed by:</strong>
+    <% if (story.user && story.user._id.toString() === userId.toString()) { %>
+        <ul>
+            <% story.views.forEach(viewer => { %>
+                <li class="<%= viewer._id.toString() === userId.toString() ? 'current-user' : '' %>">
+                    @<%= viewer.username %>
+                </li>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <p>You cannot see the viewers of this story.</p>
+    <% } %>
+</div>
 
-                                    </ul>
-                                </div>
                 </div>
 
                 <div class="story-navigation">
-                    <button onclick="navigateStory(prevStoryId)">Previous</button>
-                    <button onclick="navigateStory(nextStoryId)">Next</button>
+                    <button class="prev-btn" onclick="navigateStory(nextStoryId)"><</button>
+                    <button class="next-btn" onclick="navigateStory(prevStoryId)">></button>
                 </div>
 
-                <button class="close-btn" onclick="closeViewer()">Close</button>
+                <button onclick="closeViewer()" class="close-btn">×</button>
             </div>
 
             <script>
@@ -53,7 +57,7 @@
                 const nextStoryId = "<%= nextStory ? nextStory._id : '' %>";
 
                 function closeViewer() {
-                    window.location.href = '/profile';
+                    window.location.href = '/dashboard';
                 }
 
                 function navigateStory(storyId) {
@@ -62,7 +66,7 @@
                     }
                 }
 
-                const duration = 1500000;
+                const duration = 15000;
                 const progressFill = document.getElementById('progressFill');
 
                 function startProgressBar() {

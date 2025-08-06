@@ -5,8 +5,9 @@ body {
 }
 
 .chat-container {
+  width: 700px;
   max-width: 500px;
-  margin: 20px auto;
+  margin: 50px auto;
   border: 1px solid #dbdbdb;
   display: flex;
   flex-direction: column;
@@ -88,6 +89,7 @@ button {
 }
 
 .chat-list-container {
+  width: 500px;
   max-width: 600px;
   margin: 50px auto;
   padding: 1rem;

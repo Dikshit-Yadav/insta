@@ -49,7 +49,7 @@
     return div;
   }
 
-  socket.emit('joinRoom', { senderId, receiverId });
+  socket.emit('joinChatRoom', { senderId, receiverId });
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -63,6 +63,7 @@
   socket.on("receiveMessage", (message) => {
     const div = createMessageHTML(message);
     chatBox.appendChild(div);
+    div.offsetHeight;
     chatBox.scrollTop = chatBox.scrollHeight;
   });
 

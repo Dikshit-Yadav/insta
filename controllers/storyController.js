@@ -41,7 +41,7 @@ exports.handelShowStory = async (req, res) => {
       .exec();
 
     if (!currentStory) return res.status(404).send('Story not found');
-
+// const userId = req.session.userId.toString();
     const userId = req.session.userId.toString();
 
     const alreadyViewed = currentStory.views.some(viewer => 
@@ -72,7 +72,8 @@ exports.handelShowStory = async (req, res) => {
     res.render('storyViewer', {
       story: currentStory,
       nextStory,
-      prevStory
+      prevStory,
+      userId
     });
 
   } catch (err) {

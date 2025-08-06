@@ -54,7 +54,8 @@ exports.handelPostLike = async (req, res) => {
     }
 
     await post.save();
-    res.redirect('/dashboard');
+   
+     res.redirect(req.get('Referrer') || '/dashboard');
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error on like');
@@ -87,7 +88,7 @@ exports.handelPostComment = async (req, res) => {
       });
     }
 
-    res.redirect('/dashboard');
+   res.redirect(req.get('Referrer') || '/dashboard');
   } catch (err) {
     console.error(err);
     res.status(500).send('Failed to comment on post');

@@ -15,27 +15,33 @@
   <body>
     <div class="container">
   <%- include('partials/sidebar') %>
+<header class="topbar">
+  <div class="topbar-left">
+    <a href="/dashboard" class="logo">Instagram</a>
+  </div>
+
+  <div class="topbar-stories">
+    <div class="add-story">
+      <a class="a" href="/upload-story"><i class="fas fa-plus-circle"></i> Add Story</a>
+    </div>
+
+    <% if (stories && stories.length > 0) { %>
+      <% stories.forEach(s => { %>
+        <div class="story-preview">
+          <a href="/story/<%= s._id %>">
+            <img src="/uploads/<%= s.user.profilePic %>" alt="story" 
+                 onerror="this.src='/images/default-profile.png';" />
+            <p><%= s.user.username %></p>
+          </a>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p class="no-stories">No active stories</p>
+    <% } %>
+  </div>
+</header>
 
       <div class="main-content">
-        <div class="stories-bar">
-          <div class="add-story">
-            <a href="/upload-story"><i class="fas fa-plus-circle"></i> Add Story</a>
-          </div>
-
-          <% if (stories && stories.length > 0) { %>
-            <% stories.forEach(s => { %>
-              <div class="story-preview">
-                <a href="/story/<%= s._id %>">
-                  <img src="/uploads/<%= s.user.profilePic %>" alt="story" onerror="this.src='/images/default-profile.png';" />
-                  <p><%= s.user.username %></p>
-                </a>
-              </div>
-            <% }) %>
-          <% } else { %>
-            <p>No active stories</p>
-          <% } %>
-        </div>
-
     <div class="feed">
     <% if (posts && posts.length > 0) { %>
       <% posts.forEach(post => { %>
@@ -62,7 +68,7 @@
               <% } else { %>
                 🤍
               <% } %>
-              <span><%= post.likes.length %> likes</span>
+              <span><%= post.likes.length %></span>
             </button>
           </form>
 
@@ -238,6 +244,7 @@
       button.textContent = "🔈";
     }
   }
+
     </script>
     
   </body>

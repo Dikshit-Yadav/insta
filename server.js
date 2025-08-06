@@ -31,7 +31,7 @@ const User = require('./models/User');
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
+app.set('io', io);
 app.use(session({
   secret: 'your-secret-key',
   resave: false,
@@ -109,7 +109,7 @@ io.on('connection', (socket) => {
 
   socket.on('sendMessage', async ({ senderId, receiverId, content }) => {
     const roomId = [senderId, receiverId].sort().join('_');
-
+console.log(`Sending message from ${senderId} to ${receiverId}: ${content}`);
     const newMessage = await Message.create({ sender: senderId, receiver: receiverId, content });
 
     io.to(roomId).emit('receiveMessage', {
@@ -126,8 +126,11 @@ io.on('connection', (socket) => {
   });
 });
 
-mongoose.connect('mongodb://localhost/instagram_clone')
-.then(() => console.log('MongoDB connected'))
+// mongoose.connect('mongodb://localhost/instagram_clone')
+async function main() {
+  await mongoose.connect(process.env.MONGO_URI);
+}
+main().then(() => console.log('MongoDB connected'))
 .catch(err => console.error('MongoDB connection error:', err));
 
 
